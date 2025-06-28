@@ -18,7 +18,6 @@ import {
 
 const Home = () => {
   const [cvData, setCvData] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCVData = async () => {
@@ -28,8 +27,6 @@ const Home = () => {
         setCvData(data);
       } catch (error) {
         console.error('Error fetching CV data:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
