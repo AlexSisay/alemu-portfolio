@@ -20,9 +20,7 @@ const Home = () => {
   const [cvData, setCvData] = useState(null);
 
   // Backend URL - use Render backend in production, local in development
-  const BACKEND_URL = process.env.NODE_ENV === 'production' 
-    ? 'https://alemu-portfolio-backend.onrender.com'
-    : 'http://localhost:5000';
+  const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
 
   useEffect(() => {
     const fetchCVData = async () => {

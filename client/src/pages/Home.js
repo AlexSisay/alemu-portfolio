@@ -16,13 +16,15 @@ import {
   Award
 } from 'lucide-react';
 
+const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+
 const Home = () => {
   const [cvData, setCvData] = useState(null);
 
   useEffect(() => {
     const fetchCVData = async () => {
       try {
-        const response = await fetch('/api/cv');
+        const response = await fetch(`${BACKEND_URL}/api/profile`);
         const data = await response.json();
         setCvData(data);
       } catch (error) {

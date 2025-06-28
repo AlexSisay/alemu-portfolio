@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 
+const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+
 const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +12,7 @@ const Blog = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('/api/blog');
+        const response = await fetch(`${BACKEND_URL}/api/blog`);
         const data = await response.json();
         setPosts(data);
       } catch (error) {

@@ -10,7 +10,8 @@ import {
   Clock,
   MessageCircle
 } from 'lucide-react';
-import axios from 'axios';
+
+const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -21,15 +22,20 @@ const BlogPost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`/api/blog/${id}`);
-        setPost(response.data);
+        const response = await fetch(`${BACKEND_URL}/api/blog/${id}`);
+        if (!response.ok) {
+          throw new Error('Post not found');
+        }
+        const data = await response.json();
+        setPost(data);
       } catch (error) {
-        console.error('Error fetching post:', error);
+        console.error('Error fetching blog post:', error);
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
+
     fetchPost();
   }, [id]);
 
