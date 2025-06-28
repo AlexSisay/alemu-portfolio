@@ -1,62 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, Calendar, User, Tag, ArrowRight } from 'lucide-react';
-import axios from 'axios';
+import { Calendar, Clock, ArrowRight } from 'lucide-react';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedTag, setSelectedTag] = useState('all');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('/api/blog');
-        setPosts(response.data);
-        setFilteredPosts(response.data);
+        const response = await fetch('/api/blog');
+        const data = await response.json();
+        setPosts(data);
       } catch (error) {
-        console.error('Error fetching posts:', error);
+        console.error('Error fetching blog posts:', error);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchPosts();
   }, []);
 
-  useEffect(() => {
-    let filtered = posts;
-
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(post =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.content.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filter by tag
-    if (selectedTag !== 'all') {
-      filtered = filtered.filter(post =>
-        post.tags.some(tag => tag.toLowerCase() === selectedTag.toLowerCase())
-      );
-    }
-
-    setFilteredPosts(filtered);
-  }, [searchTerm, selectedTag, posts]);
-
-  const allTags = ['all', ...Array.from(new Set(posts.flatMap(post => post.tags)))];
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 pt-20">
+        <div className="container-max section-padding">
+          <div className="animate-pulse">
+            <div className="h-8 bg-secondary-200 rounded w-1/4 mb-4"></div>
+            <div className="h-4 bg-secondary-200 rounded w-1/2 mb-8"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white rounded-xl shadow-lg p-6">
+                  <div className="h-48 bg-secondary-200 rounded-lg mb-4"></div>
+                  <div className="h-6 bg-secondary-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-secondary-200 rounded w-1/2 mb-4"></div>
+                  <div className="h-4 bg-secondary-200 rounded w-full mb-2"></div>
+                  <div className="h-4 bg-secondary-200 rounded w-2/3"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 pt-20">
       <div className="container-max section-padding">
         {/* Header */}
         <motion.div
@@ -64,154 +56,68 @@ const Blog = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="gradient-text">Blog</span>
+          <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-4">
+            Research Blog
           </h1>
-          <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
-            Insights, research updates, and thoughts on AI, machine learning, and academic life.
+          <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
+            Exploring the latest developments in AI, machine learning, and their applications in healthcare and beyond.
           </p>
         </motion.div>
 
-        {/* Search and Filter */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-8"
-        >
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search posts..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Tags Filter */}
-            <div className="flex flex-wrap gap-2">
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => setSelectedTag(tag)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
-                    selectedTag === tag
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-white text-secondary-600 hover:bg-secondary-100 border border-secondary-200'
-                  }`}
-                >
-                  {tag === 'all' ? 'All Posts' : tag}
-                </button>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Posts Grid */}
+        {/* Blog Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPosts.map((post, index) => (
-            <motion.article
+          {posts.map((post, index) => (
+            <motion.div
               key={post.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="card hover:shadow-xl transition-all duration-300 group"
+              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
             >
-              {/* Post Image Placeholder */}
-              <div className="w-full h-48 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-lg mb-4 flex items-center justify-center">
-                <div className="text-4xl text-primary-400">📝</div>
+              <div className="h-48 bg-gradient-to-br from-primary-500 to-secondary-600 flex items-center justify-center">
+                <span className="text-white text-2xl font-bold">{post.title.charAt(0)}</span>
               </div>
-
-              {/* Post Meta */}
-              <div className="flex items-center space-x-4 text-sm text-secondary-500 mb-3">
-                <div className="flex items-center space-x-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>{formatDate(post.date)}</span>
+              <div className="p-6">
+                <div className="flex items-center text-sm text-secondary-500 mb-3">
+                  <Calendar className="w-4 h-4 mr-1" />
+                  <span>{new Date(post.date).toLocaleDateString()}</span>
+                  <Clock className="w-4 h-4 ml-4 mr-1" />
+                  <span>{post.readTime} min read</span>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <User className="w-4 h-4" />
-                  <span>{post.author}</span>
-                </div>
+                <h3 className="text-xl font-semibold text-secondary-900 mb-3">
+                  {post.title}
+                </h3>
+                <p className="text-secondary-600 mb-4 line-clamp-3">
+                  {post.excerpt}
+                </p>
+                <Link
+                  to={`/blog/${post.id}`}
+                  className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium transition-colors"
+                >
+                  Read More
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Link>
               </div>
-
-              {/* Post Title */}
-              <h2 className="text-xl font-bold text-secondary-800 mb-3 group-hover:text-primary-600 transition-colors duration-200">
-                {post.title}
-              </h2>
-
-              {/* Post Excerpt */}
-              <p className="text-secondary-600 mb-4 line-clamp-3">
-                {post.excerpt}
-              </p>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {post.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-1 bg-primary-100 text-primary-700 rounded-full text-xs font-medium"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              {/* Read More Link */}
-              <Link
-                to={`/blog/${post.id}`}
-                className="inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700 font-medium group-hover:translate-x-1 transition-transform duration-200"
-              >
-                <span>Read More</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </motion.article>
+            </motion.div>
           ))}
         </div>
 
-        {/* No Results */}
-        {filteredPosts.length === 0 && (
+        {/* Empty State */}
+        {posts.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-center py-12"
           >
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-secondary-800 mb-2">
-              No posts found
+            <div className="text-6xl mb-4">📝</div>
+            <h3 className="text-2xl font-semibold text-secondary-900 mb-2">
+              No blog posts yet
             </h3>
             <p className="text-secondary-600">
-              Try adjusting your search terms or filters.
+              Check back soon for research updates and insights!
             </p>
           </motion.div>
         )}
-
-        {/* Newsletter Signup */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mt-16 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-2xl p-8 text-center text-white"
-        >
-          <h3 className="text-2xl font-bold mb-4">Stay Updated</h3>
-          <p className="text-primary-100 mb-6 max-w-2xl mx-auto">
-            Get notified about new blog posts, research updates, and AI insights delivered to your inbox.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg text-secondary-800 focus:outline-none focus:ring-2 focus:ring-white"
-            />
-            <button className="px-6 py-3 bg-white text-primary-600 font-medium rounded-lg hover:bg-primary-50 transition-colors duration-200">
-              Subscribe
-            </button>
-          </div>
-        </motion.div>
       </div>
     </div>
   );

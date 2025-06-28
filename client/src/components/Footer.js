@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Brain, Mail, Linkedin, Github, Twitter } from 'lucide-react';
 
 const Footer = () => {
@@ -25,7 +24,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a
-                href="mailto:alemu.sisay@example.com"
+                href="mailto:alemu.nigru@unibs.it"
                 className="text-secondary-300 hover:text-primary-400 transition-colors"
               >
                 <Mail className="w-5 h-5" />
@@ -39,7 +38,7 @@ const Footer = () => {
                 <Linkedin className="w-5 h-5" />
               </a>
               <a
-                href="https://github.com/alemu-sisay"
+                href="https://github.com/alexsisay"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-secondary-300 hover:text-primary-400 transition-colors"
@@ -108,12 +107,12 @@ const Footer = () => {
             © {currentYear} Alemu Sisay Nigru. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="text-secondary-400 hover:text-primary-400 text-sm transition-colors">
+            <Link to="/privacy" className="text-secondary-400 hover:text-primary-400 text-sm transition-colors">
               Privacy Policy
-            </a>
-            <a href="#" className="text-secondary-400 hover:text-primary-400 text-sm transition-colors">
+            </Link>
+            <Link to="/terms" className="text-secondary-400 hover:text-primary-400 text-sm transition-colors">
               Terms of Service
-            </a>
+            </Link>
           </div>
         </div>
       </div>
