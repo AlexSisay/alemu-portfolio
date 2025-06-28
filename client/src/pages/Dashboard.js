@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 
+const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+
 const Dashboard = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,14 +23,16 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const response = await axios.get('/api/dashboard');
-        setAnalytics(response.data);
+        const response = await fetch(`${BACKEND_URL}/api/dashboard`);
+        const data = await response.json();
+        setAnalytics(data);
       } catch (error) {
         console.error('Error fetching analytics:', error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchAnalytics();
   }, []);
 

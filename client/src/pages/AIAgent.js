@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Brain, User, Bot, Loader2, Sparkles, Info } from 'lucide-react';
 
+const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+
 const AIAgent = () => {
   const [messages, setMessages] = useState([
     {
@@ -15,9 +17,6 @@ const AIAgent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [aiStatus, setAiStatus] = useState(null);
   const messagesEndRef = useRef(null);
-
-  // Backend URL - use Render backend in production, local in development
-  const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -40,7 +39,7 @@ const AIAgent = () => {
       }
     };
     checkAIStatus();
-  }, [BACKEND_URL]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,16 +66,13 @@ const AIAgent = () => {
           question: input.trim()
         })
       });
-
       const data = await response.json();
-
       const botMessage = {
         id: Date.now() + 1,
         type: 'bot',
         content: data.response,
         timestamp: new Date()
       };
-
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('Error sending message:', error);

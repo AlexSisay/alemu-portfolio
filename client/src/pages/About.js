@@ -14,13 +14,15 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 
+const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+
 const About = () => {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('/api/profile');
+        const response = await axios.get(`${BACKEND_URL}/api/profile`);
         setProfile(response.data);
       } catch (error) {
         console.error('Error fetching profile:', error);
