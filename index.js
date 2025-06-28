@@ -28,9 +28,7 @@ app.get('/', (req, res) => {
   });
 });
 
-const BACKEND_URL = process.env.NODE_ENV === 'production'
-  ? 'https://alemu-portfolio-backend.onrender.com'
-  : 'http://localhost:5000';
+const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
