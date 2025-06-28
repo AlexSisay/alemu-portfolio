@@ -1,71 +1,49 @@
-# Alemu Sisay Nigru - Academic Portfolio
+# Alemu Portfolio Backend
 
-A professional academic portfolio website with AI agent integration for interactive CV queries.
+Backend server for Alemu Sisay Nigru's academic portfolio with AI integration.
 
 ## Features
 
-- **Professional Portfolio**: Clean, modern design showcasing academic and professional experience
-- **AI Agent Integration**: Interactive AI assistant that can answer questions about your experience
-- **Blog Section**: Sample blog posts with interactive dashboard
-- **Responsive Design**: Works seamlessly on all devices
-- **Admin Panel**: Simple content management system
-- **GitHub Pages Ready**: Easy deployment to GitHub Pages
+- RESTful API endpoints for portfolio data
+- AI Agent integration (Google Gemini / OpenAI)
+- Blog posts management
+- Dashboard analytics
+- Health check endpoint
 
-## Tech Stack
+## API Endpoints
 
-- **Frontend**: React.js with Tailwind CSS
-- **Backend**: Node.js with Express
-- **AI Integration**: OpenAI API for intelligent responses
-- **Database**: JSON-based storage for simplicity
-- **Deployment**: GitHub Pages compatible
+- `GET /api/health` - Health check
+- `GET /api/profile` - Portfolio data
+- `POST /api/ai-chat` - AI Agent chat
+- `GET /api/ai-status` - AI provider status
+- `GET /api/blog` - Blog posts list
+- `GET /api/blog/:id` - Individual blog post
+- `GET /api/dashboard` - Dashboard analytics
 
-## Quick Start
+## Environment Variables
 
-1. **Install Dependencies**:
-   ```bash
-   npm run install-all
-   ```
+Copy `env.example` to `.env` and configure:
 
-2. **Set up Environment Variables**:
-   Create `.env` file in the server directory:
-   ```
-   OPENAI_API_KEY=your_openai_api_key_here
-   PORT=5000
-   ```
-
-3. **Run Development Server**:
-   ```bash
-   npm run dev
-   ```
-
-4. **Build for Production**:
-   ```bash
-   npm run build
-   ```
-
-## Project Structure
-
-```
-├── client/                 # React frontend
-├── server/                 # Node.js backend
-├── public/                 # Static assets
-├── data/                   # JSON data files
-└── docs/                   # Documentation
+```env
+PORT=5000
+NODE_ENV=production
+AI_PROVIDER=gemini
+GEMINI_API_KEY=your_gemini_api_key_here
+CORS_ORIGIN=https://alexsisay.github.io
 ```
 
-## Deployment
+## Deployment on Railway
 
-This project is designed to be easily deployed on GitHub Pages. The build process creates static files that can be served from any static hosting service.
+1. Push this repository to GitHub
+2. Connect to Railway
+3. Set environment variables in Railway dashboard
+4. Deploy automatically
 
-## AI Agent Features
+## Local Development
 
-The AI agent can answer questions about:
-- Academic background and research
-- Professional experience
-- Skills and expertise
-- Publications and projects
-- Contact information
+```bash
+npm install
+npm run dev
+```
 
-## License
-
-MIT License - feel free to use this template for your own portfolio! 
+Server will run on http://localhost:5000 

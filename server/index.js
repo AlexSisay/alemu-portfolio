@@ -176,6 +176,15 @@ function getFallbackResponse(question) {
 }
 
 // API Routes
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    aiProvider: aiProvider,
+    aiAvailable: !!(gemini || openai)
+  });
+});
+
 app.get('/api/profile', (req, res) => {
   res.json(cvData);
 });
