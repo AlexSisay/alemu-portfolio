@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Brain, User, Bot, Loader2, Sparkles, Info } from 'lucide-react';
-import axios from 'axios';
 
 const AIAgent = () => {
   const [messages, setMessages] = useState([
@@ -17,6 +16,11 @@ const AIAgent = () => {
   const [aiStatus, setAiStatus] = useState(null);
   const messagesEndRef = useRef(null);
 
+  // Backend URL - use Render backend in production, local in development
+  const BACKEND_URL = process.env.NODE_ENV === 'production' 
+    ? 'https://alemu-portfolio-backend.onrender.com'
+    : 'http://localhost:5000';
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -29,15 +33,16 @@ const AIAgent = () => {
     // Check AI provider status on component mount
     const checkAIStatus = async () => {
       try {
-        const response = await axios.get('/api/ai-status');
-        setAiStatus(response.data);
+        const response = await fetch(`${BACKEND_URL}/api/ai-status`);
+        const data = await response.json();
+        setAiStatus(data);
       } catch (error) {
         console.error('Error checking AI status:', error);
         setAiStatus({ provider: 'unknown', available: false, fallback: true });
       }
     };
     checkAIStatus();
-  }, []);
+  }, [BACKEND_URL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,14 +60,22 @@ const AIAgent = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('/api/ai-chat', {
-        question: input.trim()
+      const response = await fetch(`${BACKEND_URL}/api/ai-chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: input.trim()
+        })
       });
+
+      const data = await response.json();
 
       const botMessage = {
         id: Date.now() + 1,
         type: 'bot',
-        content: response.data.response,
+        content: data.response,
         timestamp: new Date()
       };
 
