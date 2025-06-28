@@ -5,7 +5,6 @@ import {
   ArrowLeft, 
   Calendar, 
   User, 
-  Tag, 
   Share2, 
   BookOpen,
   Clock,
@@ -17,6 +16,7 @@ const BlogPost = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -25,6 +25,7 @@ const BlogPost = () => {
         setPost(response.data);
       } catch (error) {
         console.error('Error fetching post:', error);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -40,7 +41,7 @@ const BlogPost = () => {
     );
   }
 
-  if (!post) {
+  if (error) {
     return (
       <div className="pt-16 min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -52,6 +53,8 @@ const BlogPost = () => {
       </div>
     );
   }
+
+  if (!post) return null;
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {

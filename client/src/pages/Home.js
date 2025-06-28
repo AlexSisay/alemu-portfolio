@@ -3,191 +3,255 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   ArrowRight, 
+  Download, 
+  Github, 
+  Linkedin, 
+  Mail, 
   Brain, 
   Code, 
-  BookOpen, 
-  BarChart3, 
-  MessageCircle,
-  Download,
-  ExternalLink
+  Database, 
+  TrendingUp,
+  Calendar,
+  MapPin,
+  Award
 } from 'lucide-react';
-import axios from 'axios';
 
 const Home = () => {
-  const [profile, setProfile] = useState(null);
-  const [analytics, setAnalytics] = useState(null);
+  const [cvData, setCvData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCVData = async () => {
       try {
-        const [profileRes, analyticsRes] = await Promise.all([
-          axios.get('/api/profile'),
-          axios.get('/api/dashboard')
-        ]);
-        setProfile(profileRes.data);
-        setAnalytics(analyticsRes.data);
+        const response = await fetch('/api/cv');
+        const data = await response.json();
+        setCvData(data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching CV data:', error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchData();
+
+    fetchCVData();
   }, []);
 
-  const features = [
-    {
-      icon: Brain,
-      title: "AI Research",
-      description: "Leading-edge research in machine learning and artificial intelligence applications",
-      color: "from-blue-500 to-purple-600"
-    },
-    {
-      icon: Code,
-      title: "Technical Expertise",
-      description: "Deep knowledge in Python, TensorFlow, PyTorch, and modern AI frameworks",
-      color: "from-green-500 to-blue-600"
-    },
-    {
-      icon: BookOpen,
-      title: "Academic Excellence",
-      description: "Published research papers and contributions to the AI community",
-      color: "from-purple-500 to-pink-600"
-    },
-    {
-      icon: BarChart3,
-      title: "Data Science",
-      description: "Comprehensive experience in data analysis and statistical modeling",
-      color: "from-orange-500 to-red-600"
-    }
+  const stats = [
+    { icon: Brain, label: 'Research Papers', value: '15+' },
+    { icon: Code, label: 'Projects', value: '25+' },
+    { icon: Database, label: 'Datasets', value: '8' },
+    { icon: TrendingUp, label: 'Years Experience', value: '5+' }
   ];
 
-  const stats = [
-    { label: "Publications", value: analytics?.totalPublications || 0 },
-    { label: "Projects", value: analytics?.totalProjects || 0 },
-    { label: "Years Experience", value: analytics?.yearsOfExperience || 0 },
-    { label: "Blog Posts", value: analytics?.blogPosts || 0 }
+  const skills = [
+    { name: 'Machine Learning', level: 95 },
+    { name: 'Python', level: 90 },
+    { name: 'Deep Learning', level: 88 },
+    { name: 'Computer Vision', level: 85 },
+    { name: 'Data Science', level: 82 },
+    { name: 'TensorFlow/PyTorch', level: 80 }
   ];
 
   return (
-    <div className="pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       {/* Hero Section */}
-      <section className="section-padding">
-        <div className="container-max">
+      <section className="pt-20 pb-16">
+        <div className="container-max section-padding">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.8 }}
             >
-              <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="w-8 h-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
+                  <Brain className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-lg font-medium text-primary-600">AI Researcher & Academic</span>
+              </div>
+              
+              <h1 className="text-4xl md:text-6xl font-bold text-secondary-900 mb-6">
+                Hi, I'm{' '}
                 <span className="gradient-text">Alemu Sisay Nigru</span>
               </h1>
-              <h2 className="text-2xl md:text-3xl text-secondary-600 mb-6">
-                AI Researcher & Academic
-              </h2>
-              <p className="text-lg text-secondary-600 mb-8 leading-relaxed">
-                Passionate about advancing artificial intelligence for social good. 
-                Specializing in machine learning, computer vision, and healthcare applications. 
-                Committed to research excellence and knowledge sharing.
+              
+              <p className="text-xl text-secondary-600 mb-8 leading-relaxed">
+                Passionate AI researcher specializing in machine learning, computer vision, 
+                and healthcare applications. Currently pursuing my academic journey while 
+                contributing to cutting-edge research projects.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Link
-                  to="/ai-agent"
-                  className="btn-primary flex items-center justify-center space-x-2"
+                  to="/about"
+                  className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
                 >
-                  <MessageCircle className="w-5 h-5" />
-                  <span>Chat with AI Agent</span>
-                  <ArrowRight className="w-4 h-4" />
+                  Learn More
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
                 <a
-                  href="/Alemu Sisay Nigru-resume_June_20_2025.pdf"
+                  href="/Alemu%20Sisay%20Nigru-resume.pdf"
+                  download
+                  className="inline-flex items-center px-6 py-3 border border-secondary-300 text-secondary-700 rounded-lg hover:bg-secondary-50 transition-colors font-medium"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download CV
+                </a>
+              </div>
+
+              {/* Social Links */}
+              <div className="flex space-x-4">
+                <a
+                  href="https://github.com/alexsisay"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-secondary flex items-center justify-center space-x-2"
+                  className="text-secondary-600 hover:text-primary-600 transition-colors"
                 >
-                  <Download className="w-5 h-5" />
-                  <span>Download CV</span>
-                  <ExternalLink className="w-4 h-4" />
+                  <Github className="w-6 h-6" />
+                </a>
+                <a
+                  href="https://linkedin.com/in/alemu-sisay"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-secondary-600 hover:text-primary-600 transition-colors"
+                >
+                  <Linkedin className="w-6 h-6" />
+                </a>
+                <a
+                  href="mailto:alemu.nigru@unibs.it"
+                  className="text-secondary-600 hover:text-primary-600 transition-colors"
+                >
+                  <Mail className="w-6 h-6" />
                 </a>
               </div>
             </motion.div>
 
+            {/* Right Content - Profile Image */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="flex justify-center lg:justify-end"
             >
-              <div className="relative z-10">
-                <img
-                  src="/alemu.jpg"
-                  alt="Alemu Sisay Nigru"
-                  className="w-full h-96 object-cover rounded-2xl shadow-2xl"
-                />
+              <div className="relative">
+                <div className="w-80 h-80 rounded-full bg-gradient-to-br from-primary-500 to-secondary-600 p-2">
+                  <div className="w-full h-full rounded-full bg-white p-4 flex items-center justify-center">
+                    <img
+                      src="/alemu.jpg"
+                      alt="Alemu Sisay Nigru"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </div>
+                </div>
+                <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-gradient-to-br from-secondary-500 to-primary-500 rounded-full flex items-center justify-center">
+                  <Brain className="w-12 h-12 text-white" />
+                </div>
               </div>
-              <div className="absolute -inset-4 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl opacity-20 blur-xl"></div>
             </motion.div>
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="section-padding bg-white">
-        <div className="container-max">
+      <section className="py-16 bg-white">
+        <div className="container-max section-padding">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
             className="grid grid-cols-2 md:grid-cols-4 gap-8"
           >
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">
-                  {stat.value}+
+              <div key={stat.label} className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <stat.icon className="w-8 h-8 text-primary-600" />
                 </div>
-                <div className="text-secondary-600 font-medium">
-                  {stat.label}
-                </div>
+                <div className="text-3xl font-bold text-secondary-900 mb-2">{stat.value}</div>
+                <div className="text-secondary-600">{stat.label}</div>
               </div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="section-padding">
-        <div className="container-max">
+      {/* Current Position Section */}
+      {cvData && (
+        <section className="py-16">
+          <div className="container-max section-padding">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="bg-gradient-to-r from-primary-600 to-secondary-600 rounded-2xl p-8 text-white"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="flex items-center space-x-3">
+                  <MapPin className="w-6 h-6" />
+                  <div>
+                    <div className="text-sm opacity-90">Current Location</div>
+                    <div className="font-semibold">{cvData.currentPosition.location}</div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Calendar className="w-6 h-6" />
+                  <div>
+                    <div className="text-sm opacity-90">Since</div>
+                    <div className="font-semibold">{cvData.currentPosition.startDate}</div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Award className="w-6 h-6" />
+                  <div>
+                    <div className="text-sm opacity-90">Position</div>
+                    <div className="font-semibold">{cvData.currentPosition.title}</div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Skills Section */}
+      <section className="py-16 bg-white">
+        <div className="container-max section-padding">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Areas of Expertise
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
+              Technical Skills
             </h2>
             <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
-              My research and professional experience spans across multiple domains 
-              in artificial intelligence and data science.
+              Expertise in modern AI/ML technologies and frameworks
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {skills.map((skill, index) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                key={skill.name}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="card hover:shadow-xl transition-all duration-300 group"
               >
-                <div className={`w-12 h-12 bg-gradient-to-r ${feature.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <feature.icon className="w-6 h-6 text-white" />
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium text-secondary-900">{skill.name}</span>
+                  <span className="text-sm text-secondary-600">{skill.level}%</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-secondary-600">{feature.description}</p>
+                <div className="w-full bg-secondary-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-1000"
+                    style={{ width: `${skill.level}%` }}
+                  ></div>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -195,34 +259,34 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-gradient-to-r from-primary-600 to-secondary-600">
-        <div className="container-max text-center">
+      <section className="py-16">
+        <div className="container-max section-padding">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
+            className="text-center"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
               Ready to Connect?
             </h2>
-            <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-              Let's discuss research opportunities, collaborations, or simply chat about AI and technology.
+            <p className="text-lg text-secondary-600 mb-8 max-w-2xl mx-auto">
+              Let's discuss research opportunities, collaborations, or just have a chat about AI and technology.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                to="/about"
-                className="bg-white text-primary-600 hover:bg-primary-50 font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                to="/ai-agent"
+                className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
               >
-                <span>Learn More About Me</span>
-                <ArrowRight className="w-5 h-5" />
+                <Brain className="w-4 h-4 mr-2" />
+                Chat with AI Agent
               </Link>
               <Link
-                to="/ai-agent"
-                className="border-2 border-white text-white hover:bg-white hover:text-primary-600 font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                to="/about"
+                className="inline-flex items-center px-6 py-3 border border-secondary-300 text-secondary-700 rounded-lg hover:bg-secondary-50 transition-colors font-medium"
               >
-                <Brain className="w-5 h-5" />
-                <span>Ask AI Assistant</span>
+                Learn More About Me
               </Link>
             </div>
           </motion.div>
