@@ -135,7 +135,7 @@ const Home = () => {
                 <div className="w-80 h-80 rounded-full bg-gradient-to-br from-primary-500 to-secondary-600 p-2">
                   <div className="w-full h-full rounded-full bg-white p-4 flex items-center justify-center">
                     <img
-                      src="/alemu.jpg"
+                      src="https://alexsisay.github.io/alemu-portfolio/alemu.jpg"
                       alt="Alemu Sisay Nigru"
                       className="w-full h-full rounded-full object-cover"
                     />
