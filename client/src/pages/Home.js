@@ -110,7 +110,7 @@ const Home = () => {
                   <Github className="w-6 h-6" />
                 </a>
                 <a
-                  href="https://linkedin.com/in/alemu-sisay"
+                  href="https://www.linkedin.com/in/alemu-sisay-nigru-23612514b/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-secondary-600 hover:text-primary-600 transition-colors"
@@ -176,7 +176,7 @@ const Home = () => {
       </section>
 
       {/* Current Position Section */}
-      {cvData && (
+      {cvData && cvData.personal && (
         <section className="py-16">
           <div className="container-max section-padding">
             <motion.div
@@ -191,21 +191,21 @@ const Home = () => {
                   <MapPin className="w-6 h-6" />
                   <div>
                     <div className="text-sm opacity-90">Current Location</div>
-                    <div className="font-semibold">{cvData.currentPosition.location}</div>
+                    <div className="font-semibold">{cvData.personal.location || ''}</div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Calendar className="w-6 h-6" />
                   <div>
-                    <div className="text-sm opacity-90">Since</div>
-                    <div className="font-semibold">{cvData.currentPosition.startDate}</div>
+                    <div className="text-sm opacity-90">Contact</div>
+                    <div className="font-semibold">{cvData.personal.email || ''}</div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Award className="w-6 h-6" />
                   <div>
                     <div className="text-sm opacity-90">Position</div>
-                    <div className="font-semibold">{cvData.currentPosition.title}</div>
+                    <div className="font-semibold">{cvData.personal.title || ''}</div>
                   </div>
                 </div>
               </div>
