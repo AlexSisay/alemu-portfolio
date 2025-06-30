@@ -54,7 +54,7 @@ const About = () => {
             >
               <div className="relative">
                 <img
-                  src="/alemu.jpg"
+                  src="https://alexsisay.github.io/alemu-portfolio/professnal_photo_2022.jpg"
                   alt="Alemu Sisay Nigru"
                   className="w-full h-96 object-cover rounded-2xl shadow-2xl"
                 />
