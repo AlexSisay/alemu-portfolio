@@ -12,7 +12,7 @@ import {
   Activity,
   PieChart
 } from 'lucide-react';
-import axios from 'axios';
+
 
 const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
 
