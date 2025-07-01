@@ -10,7 +10,10 @@ import {
   Mail,
   Linkedin,
   Github,
-  Download
+  Download,
+  Heart,
+  Globe,
+  Lightbulb
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -131,6 +134,159 @@ const About = () => {
                   social good.
                 </p>
               </div>
+
+              {/* My Story */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                viewport={{ once: true }}
+                className="mb-12"
+              >
+                <h3 className="text-2xl font-bold mb-6 flex items-center space-x-2">
+                  <Heart className="w-6 h-6 text-primary-600" />
+                  <span>My Story</span>
+                </h3>
+                <div className="card">
+                  <div className="space-y-6 text-secondary-700 leading-relaxed">
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                        <Globe className="w-6 h-6 text-primary-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-secondary-800 mb-2">From Rural Ethiopia to AI Research</h4>
+                        <p>
+                          I was born in Kobo-Robit, a quiet rural town in Ethiopia, where electricity was a distant dream 
+                          and clean water a luxury. For most of my childhood, I had never seen a light switch or a glowing screen. 
+                          My schoolbooks were read by the flicker of a handmade kerosene lamp—built from a used bottle, a bit of wire, 
+                          and a strip of cotton rope. Television, radio, or computers were beyond imagination.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 w-12 h-12 bg-secondary-100 rounded-full flex items-center justify-center">
+                        <Users className="w-6 h-6 text-secondary-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-secondary-800 mb-2">Guided by Family and Faith</h4>
+                        <p>
+                          Raised by my deeply spiritual grandmother, Emahoy Mulu Fentabil, I was guided not only by her values 
+                          but also by the rhythm of rural life—tending to goats and cattle, praying in silence, and dreaming under the stars. 
+                          Her wisdom and the simplicity of rural life shaped my character and instilled in me a deep appreciation for 
+                          community and perseverance.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                        <Heart className="w-6 h-6 text-primary-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-semibold text-secondary-800 mb-2">💍 A New Chapter of Love and Support</h4>
+                        <div className="flex flex-col md:flex-row md:items-center md:space-x-6">
+                          <img
+                            src="/wedding.jpg"
+                            alt="Alemu and Betelehem on their wedding day, smiling and dressed in wedding attire."
+                            className="w-full md:w-64 rounded-2xl shadow-lg border border-secondary-200 mb-4 md:mb-0"
+                          />
+                          <p className="text-secondary-700">
+                            On November 17, 2024, I married my beautiful wife Betelehem Dagnaw, my best friend and supporter throughout my journey. 
+                            Her unwavering support, understanding, and encouragement have been the foundation that allows me to pursue my dreams 
+                            and research with confidence. Together, we continue to build a life that bridges our Ethiopian roots with our global aspirations.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                        <Lightbulb className="w-6 h-6 text-primary-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-secondary-800 mb-2">The First Spark of Technology</h4>
+                        <p>
+                          It wasn't until I moved to the nearby city of Kobo for Grade 11 that I experienced electricity for the first time. 
+                          The shift was overwhelming. Suddenly, I could study at night, listen to radio programs, and attend an IT class 
+                          that introduced me to a computer. I even mistook a local encyclopedia software for the internet—it took time 
+                          to understand what true connectivity meant.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 w-12 h-12 bg-secondary-100 rounded-full flex items-center justify-center">
+                        <GraduationCap className="w-6 h-6 text-secondary-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-secondary-800 mb-2">Academic Excellence and International Journey</h4>
+                        <p>
+                          Despite financial challenges, cooking with wood and charcoal, and surviving on minimal resources, I persevered. 
+                          In 2012, I enrolled at the University of Gondar, where I studied Electrical and Computer Engineering, 
+                          specializing in Communication Engineering. After graduating top of my class with a CGPA of 3.89/4.0, 
+                          I served as an Assistant Lecturer (2016–2017) and completed a Higher Diploma Certificate in Teaching Methods in 2017.
+                        </p>
+                        <p className="mt-3">
+                          In 2018, I began a Master's program in Communication Engineering at Addis Ababa Science and Technology University (AASTU), 
+                          completing the coursework with a perfect CGPA of 4.00. However, before defending my thesis, I was awarded a scholarship 
+                          at Università degli Studi di Brescia, Italy, and chose to pursue an MSc in Communication Technologies and Multimedia.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                        <Code className="w-6 h-6 text-primary-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-secondary-800 mb-2">From Europe to AI Research</h4>
+                        <p>
+                          This program took me across Europe, including a 6-month Erasmus+ exchange at Mid Sweden University, 
+                          followed by a thesis-abroad program at the Artificial Intelligence Institute in Ethiopia, where I explored 
+                          deep learning methods for neuro-image retrieval. In March 2022, I graduated cum laude (110/110 cum lode) 
+                          and began an extraordinary internship at Poliambulatorio Oberdan, an advanced clinic for back pain diagnosis in Brescia.
+                        </p>
+                        <p className="mt-3">
+                          There, I was immersed in therapeutic follow-up, medical image acquisition, segmentation, and diagnostic data analysis. 
+                          Inspired by the role of data, I pursued a 6-month Applied Data Science Lab certificate from WorldQuant University, 
+                          mastering end-to-end data science workflows.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 w-12 h-12 bg-secondary-100 rounded-full flex items-center justify-center">
+                        <Award className="w-6 h-6 text-secondary-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-secondary-800 mb-2">PhD Journey and Global Impact</h4>
+                        <p>
+                          In December 2022, I started my Ph.D. in Artificial Intelligence in Medicine at the University of Brescia. 
+                          My research focuses on AI-assisted technologies for spine-related pathologies, aiming to enhance clinical 
+                          diagnostic workflows. During this journey, I have served as a visiting Ph.D. student at the Center for Digital 
+                          Health & Implementation Science (CDHI) in Ethiopia (September – Dec 2024), and at New York University 
+                          (April–Oct 2025), where I've contributed to MRI-based spinal pathology grading and domain adaptation research.
+                        </p>
+                        <p className="mt-3">
+                          I've also deepened my academic toolkit through elite programs such as the Oxford Machine Learning Summer School, 
+                          IEEE ComSoc eHealth TC Ph.D. School, and Ph.D. School on Statistical Methods & Data Analysis in Medical Research 
+                          at the University of Brescia, along with numerous international conferences and online seminars on medical AI and imaging.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-primary-50 to-secondary-50 p-6 rounded-xl border-l-4 border-primary-500">
+                      <p className="text-secondary-800 font-medium italic">
+                        "From lighting firewood under starry rural skies to programming AI systems in urban research labs, 
+                        my story is a bridge between worlds powered by hope, humility, and an unrelenting thirst for knowledge. 
+                        I carry the spirit of Kobo-Robit into every model I build and every paper I write, always seeking to 
+                        give back to the communities that shaped me."
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
 
               {/* Education */}
               <motion.div
