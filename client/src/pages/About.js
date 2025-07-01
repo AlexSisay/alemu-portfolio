@@ -179,26 +179,7 @@ const About = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-                        <Heart className="w-6 h-6 text-red-500" />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-secondary-800 mb-2">💍 A New Chapter of Love and Support</h4>
-                        <div className="flex flex-col md:flex-row md:items-center md:space-x-6">
-                          <img
-                            src="https://alexsisay.github.io/alemu-portfolio/wedding.jpg"
-                            alt="Alemu and Betelehem on their wedding day, smiling and dressed in wedding attire."
-                            className="w-full md:w-64 rounded-2xl shadow-lg border border-secondary-200 mb-4 md:mb-0"
-                          />
-                          <p className="text-secondary-700">
-                            On November 17, 2024, I married my beautiful wife Betelehem Dagnaw, my best friend and supporter throughout my journey. 
-                            Her unwavering support, understanding, and encouragement have been the foundation that allows me to pursue my dreams 
-                            and research with confidence. Together, we continue to build a life that bridges our Ethiopian roots with our global aspirations.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+
 
                     <div className="flex items-start space-x-4">
                       <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
