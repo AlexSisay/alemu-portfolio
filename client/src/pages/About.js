@@ -187,7 +187,7 @@ const About = () => {
                         <h4 className="text-lg font-semibold text-secondary-800 mb-2">💍 A New Chapter of Love and Support</h4>
                         <div className="flex flex-col md:flex-row md:items-center md:space-x-6">
                           <img
-                            src="https://alexsisay.github.io/alemu-portfolio/client/public/wedding.jpg"
+                            src="https://alexsisay.github.io/alemu-portfolio/wedding.jpg"
                             alt="Alemu and Betelehem on their wedding day, smiling and dressed in wedding attire."
                             className="w-full md:w-64 rounded-2xl shadow-lg border border-secondary-200 mb-4 md:mb-0"
                           />
