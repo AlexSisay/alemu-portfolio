@@ -240,7 +240,7 @@ const About = () => {
                               </p>
                             </div>
                           </div>
-                          In 2018, I began a Master's program in Communication Engineering at Addis Ababa Science and Technology University (AASTU), 
+                          In 2019, I began a Master's program in Communication Engineering at Addis Ababa Science and Technology University (AASTU), 
                           completing the coursework with a perfect CGPA of 4.00. However, before defending my thesis, I was awarded a scholarship 
                           at Università degli Studi di Brescia, Italy, and chose to pursue an MSc in Communication Technologies and Multimedia.
                         </p>
