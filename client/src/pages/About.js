@@ -183,7 +183,7 @@ const About = () => {
                       <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
                         <Heart className="w-6 h-6 text-primary-600" />
                       </div>
-                      <div className="flex-1">
+                      <div>
                         <h4 className="text-lg font-semibold text-secondary-800 mb-2">💍 A New Chapter of Love and Support</h4>
                         <div className="flex flex-col md:flex-row md:items-center md:space-x-6">
                           <img
@@ -228,6 +228,18 @@ const About = () => {
                           I served as an Assistant Lecturer (2016–2017) and completed a Higher Diploma Certificate in Teaching Methods in 2017.
                         </p>
                         <p className="mt-3">
+                          {/* From Africa to Europe section */}
+                          <div className="flex items-start space-x-4 mb-4">
+                            <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                              <Globe className="w-6 h-6 text-primary-600" />
+                            </div>
+                            <div>
+                              <h4 className="text-lg font-semibold text-secondary-800 mb-2">From Africa to Europe</h4>
+                              <p>
+                                My academic journey took a transformative turn as I moved from Africa to Europe to pursue my MSc. Leaving behind the familiar landscapes of Ethiopia, I embraced the excitement and challenges of studying in a new continent, immersing myself in diverse cultures, languages, and academic environments. This cross-continental experience broadened my perspective and deepened my commitment to global research and collaboration.
+                              </p>
+                            </div>
+                          </div>
                           In 2018, I began a Master's program in Communication Engineering at Addis Ababa Science and Technology University (AASTU), 
                           completing the coursework with a perfect CGPA of 4.00. However, before defending my thesis, I was awarded a scholarship 
                           at Università degli Studi di Brescia, Italy, and chose to pursue an MSc in Communication Technologies and Multimedia.
@@ -266,7 +278,7 @@ const About = () => {
                           My research focuses on AI-assisted technologies for spine-related pathologies, aiming to enhance clinical 
                           diagnostic workflows. During this journey, I have served as a visiting Ph.D. student at the Center for Digital 
                           Health & Implementation Science (CDHI) in Ethiopia (September – Dec 2024), and at New York University 
-                          (April–Oct 2025), where I've contributed to MRI-based spinal pathology grading and domain adaptation research.
+                          (April–Oct 2025), where I am contributing to MRI-based spinal pathology grading and domain adaptation research.
                         </p>
                         <p className="mt-3">
                           I've also deepened my academic toolkit through elite programs such as the Oxford Machine Learning Summer School, 
@@ -313,6 +325,34 @@ const About = () => {
                       <p className="text-secondary-600">{edu.focus}</p>
                     </div>
                   ))}
+                </div>
+              </motion.div>
+
+              {/* Achievements Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="mb-8"
+              >
+                <h3 className="text-2xl font-bold mb-6 flex items-center space-x-2">
+                  <Award className="w-6 h-6 text-primary-600" />
+                  <span>Achievements</span>
+                </h3>
+                <div className="flex flex-wrap gap-4">
+                  <div className="flex items-center space-x-2 bg-primary-50 px-4 py-2 rounded-lg border border-primary-200">
+                    <span className="text-2xl">🎓</span>
+                    <span className="font-medium text-secondary-800">Graduated top of class</span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-secondary-50 px-4 py-2 rounded-lg border border-secondary-200">
+                    <span className="text-2xl">🌍</span>
+                    <span className="font-medium text-secondary-800">Erasmus+ Study Award</span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-yellow-50 px-4 py-2 rounded-lg border border-yellow-200">
+                    <span className="text-2xl">🏆</span>
+                    <span className="font-medium text-secondary-800">Thesis Abroad Award</span>
+                  </div>
                 </div>
               </motion.div>
 
@@ -428,6 +468,26 @@ const About = () => {
                   ))}
                 </div>
               </motion.div>
+
+              {/* Call to Action */}
+              <div className="mt-12 text-center">
+                <div className="inline-block bg-primary-100 px-6 py-4 rounded-xl shadow-md">
+                  <h3 className="text-2xl font-bold mb-2 text-primary-700">Let's Connect!</h3>
+                  <p className="text-secondary-700 mb-2">Interested in collaborating, learning more, or just want to say hello?</p>
+                  <a
+                    href="mailto:alemu.nigru@unibs.it"
+                    className="btn-primary inline-flex items-center space-x-2 text-lg"
+                  >
+                    <Mail className="w-5 h-5" />
+                    <span>Contact Me</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Keep It Updated Note */}
+              <div className="mt-8 text-center text-xs text-secondary-400">
+                <span>Page regularly updated with new milestones and achievements. Last updated: {new Date().toLocaleDateString()}</span>
+              </div>
             </motion.div>
           </div>
         </div>
