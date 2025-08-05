@@ -42,33 +42,43 @@ const cvData = {
     email: "alemu.nigru@unibs.it",
     location: "Italy",
     phone: "+39 3518443838",
-    linkedin: "linkedin.com/in/alemu-sisay",
-    github: "github.com/alexsisay"
+    linkedin: "https://www.linkedin.com/in/alemu-sisay-nigru-23612514b/",
+    github: "https://github.com/AlexSisay"
   },
   education: [
     {
       degree: "PhD, Artificial Intelligence in Medicine",
-      institution: "University of Brescia",
+      institution: "University of Brescia, Italy",
       year: "2022-2025",
       focus: "Artificial Intelligence, Machine Learning, Medical Imaging"
     },
     {
       degree: "MSc, Communication Technologies and Multimedia",
-      institution: "University of Brescia",
+      institution: "University of Brescia, Italy",
       year: "2019-2022",
+      Score: "110/110 Cum Laude",
+      Thesis: "Deep learning based Neuroimage retrieval",
       focus: "Multimedia Engineering, AI, Computer Vision"
+    },
+    {
+      degree: "BSc, Electrical and Computer Engineering",
+      institution: "University of Gondar, Ethiopia",
+      year: "2012-2016",
+      Score: "3.89/4.00 (Gold medalist)",
+      Thesis: "Development of biometric identification system for the UoG cafeteria and library",
+      focus: "Telecommunication Engineering"
     }
   ],
   experience: [
     {
-      title: "AI Research Scientist",
-      company: "Research Institution",
+      title: "Junior AI Research Scientist",
+      company: "X-Ray Service s.r.l",
       period: "2022-Present",
       description: "Leading research in AI and machine learning applications"
     },
     {
       title: "Teaching Assistant",
-      company: "University",
+      company: "University of Brescia",
       period: "2020-2022",
       description: "Assisted in teaching AI and computer science courses"
     }
@@ -80,17 +90,17 @@ const cvData = {
   ],
   publications: [
     {
-      title: "Advanced AI Applications in Healthcare",
-      journal: "AI Research Journal",
+      title: "Aexternal validation of SpineNetV2 on a comprehensive set of radiological features for grading lumbosacral disc pathologies",
+      journal: "North American Spine Society Journal (NASSJ)",
       year: "2024",
-      doi: "10.1000/example"
+      doi: "https://doi.org/10.1016/j.xnsj.2024.100564"
     }
   ],
   projects: [
     {
       name: "AI-Powered Healthcare System",
-      description: "Developed machine learning models for disease prediction",
-      technologies: ["Python", "TensorFlow", "Scikit-learn"]
+      description: "Developed machine learning models for pathology prediction",
+      technologies: ["Python", "Pytorch", "Scikit-learn"]
     }
   ]
 };
@@ -161,7 +171,7 @@ function getFallbackResponse(question) {
   }
   
   if (lowerQuestion.includes('contact') || lowerQuestion.includes('email')) {
-    return "You can contact Alemu at alemu.nigru@unibs.it or through his LinkedIn profile at linkedin.com/in/alemu-sisay. He's based in Italy and available for research collaborations.";
+    return "You can contact Alemu at alemu.nigru@unibs.it or through his LinkedIn profile at https://www.linkedin.com/in/alemu-sisay-nigru-23612514b/. He's based in Italy and available for research collaborations.";
   }
   
   if (lowerQuestion.includes('publication') || lowerQuestion.includes('paper')) {
