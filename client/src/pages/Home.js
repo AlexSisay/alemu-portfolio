@@ -36,10 +36,10 @@ const Home = () => {
   }, []);
 
   const stats = [
-    { icon: Brain, label: 'Research Papers', value: '15+' },
-    { icon: Code, label: 'Projects', value: '25+' },
-    { icon: Database, label: 'Datasets', value: '8' },
-    { icon: TrendingUp, label: 'Years Experience', value: '5+' }
+    { icon: Brain, label: 'Research Papers', value: '1' },
+    { icon: Code, label: 'Projects', value: '3+' },
+    { icon: Database, label: 'Datasets', value: '1' },
+    { icon: TrendingUp, label: 'Years Experience', value: '5+ on Medical AI' }
   ];
 
   const skills = [
@@ -48,7 +48,7 @@ const Home = () => {
     { name: 'Deep Learning', level: 88 },
     { name: 'Computer Vision', level: 85 },
     { name: 'Data Science', level: 82 },
-    { name: 'TensorFlow/PyTorch', level: 80 }
+    { name: 'TensorFlow/PyTorch/Pydicom/Niffti', level: 90 }
   ];
 
   return (
