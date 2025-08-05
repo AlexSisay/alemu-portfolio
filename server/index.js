@@ -169,7 +169,7 @@ function getFallbackResponse(question) {
   }
   
   if (lowerQuestion.includes('project')) {
-    return "Alemu has worked on several AI projects, including an AI-powered healthcare system for disease prediction using machine learning models developed with Python, TensorFlow, and Scikit-learn.";
+    return "Alemu has worked on AI projects, including an AI-powered healthcare system for disease prediction using machine learning models developed with Python, TensorFlow, and Scikit-learn.";
   }
   
   return "I apologize, but I'm having trouble accessing my knowledge base right now. Please try asking about Alemu's research focus, education, skills, publications, or contact information. You can also reach out to him directly at alemu.nigru@unibs.it.";
@@ -216,31 +216,14 @@ app.get('/api/ai-status', (req, res) => {
 // Blog data
 const blogPosts = [
   {
-    id: 1,
-    title: "The Future of AI in Academic Research",
-    excerpt: "Exploring how artificial intelligence is transforming research methodologies across disciplines...",
-    content: "Artificial Intelligence is revolutionizing the way we conduct academic research. From data analysis to literature reviews, AI tools are becoming indispensable for researchers worldwide. In this post, I'll share insights from my own research experience and discuss emerging trends in AI-powered academic workflows.",
-    author: "Alemu Sisay Nigru",
-    date: "2024-01-15",
-    tags: ["AI", "Research", "Academic"]
-  },
   {
-    id: 2,
+    id: 1,
     title: "Machine Learning Applications in Healthcare",
     excerpt: "A comprehensive overview of ML applications in modern healthcare systems...",
     content: "Healthcare is one of the most promising domains for machine learning applications. From diagnostic imaging to drug discovery, ML algorithms are helping medical professionals make better decisions and improve patient outcomes. This post explores current applications and future possibilities.",
     author: "Alemu Sisay Nigru",
     date: "2024-01-10",
     tags: ["ML", "Healthcare", "AI"]
-  },
-  {
-    id: 3,
-    title: "Building Effective AI Research Teams",
-    excerpt: "Lessons learned from leading AI research projects and managing diverse teams...",
-    content: "Success in AI research often depends on having the right team composition and management approach. In this post, I share strategies for building effective AI research teams, including skill diversity, communication practices, and project management techniques.",
-    author: "Alemu Sisay Nigru",
-    date: "2024-01-05",
-    tags: ["Leadership", "Research", "Team Management"]
   }
 ];
 
