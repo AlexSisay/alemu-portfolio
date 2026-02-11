@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
+  const [fetchError, setFetchError] = useState('');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingPost, setEditingPost] = useState(null);
@@ -32,12 +33,17 @@ const Dashboard = () => {
   const [saving, setSaving] = useState(false);
 
   const fetchPosts = async () => {
+    setFetchError('');
     try {
-      const res = await fetch(`${BACKEND_URL}/api/blog`);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 90000);
+      const res = await fetch(`${BACKEND_URL}/api/blog`, { signal: controller.signal });
+      clearTimeout(timeout);
       const data = await res.json();
       setPosts(Array.isArray(data) ? data : []);
     } catch (err) {
       setPosts([]);
+      setFetchError('Could not reach backend. If using Render free tier, wait 30–60 seconds and refresh.');
     } finally {
       setLoading(false);
     }
@@ -51,18 +57,24 @@ const Dashboard = () => {
     e.preventDefault();
     setLoginError('');
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 90000);
       const res = await fetch(`${BACKEND_URL}/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginForm)
+        body: JSON.stringify(loginForm),
+        signal: controller.signal
       });
+      clearTimeout(timeout);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Login failed');
       localStorage.setItem(TOKEN_KEY, data.token);
       setToken(data.token);
       setLoginForm({ username: '', password: '' });
     } catch (err) {
-      setLoginError(err.message || 'Invalid credentials');
+      setLoginError(err.name === 'AbortError'
+        ? 'Backend is waking up (Render free tier). Wait 30–60 seconds and try again.'
+        : (err.message || 'Invalid credentials'));
     }
   };
 
@@ -167,6 +179,11 @@ const Dashboard = () => {
             <p className="text-secondary-600 text-center mb-6">
               Sign in to post news and updates to your blog.
             </p>
+            {loginError && (
+              <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm">
+                {loginError}
+              </div>
+            )}
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-secondary-700 mb-1">
@@ -196,9 +213,6 @@ const Dashboard = () => {
                   required
                 />
               </div>
-              {loginError && (
-                <p className="text-red-600 text-sm">{loginError}</p>
-              )}
               <button type="submit" className="btn-primary w-full flex items-center justify-center space-x-2">
                 <LogIn className="w-4 h-4" />
                 <span>Sign In</span>
@@ -267,6 +281,13 @@ const Dashboard = () => {
             <FileText className="w-5 h-5 text-primary-600" />
             <span>Your Posts ({posts.length})</span>
           </h2>
+
+          {fetchError && (
+            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm flex justify-between items-center">
+              <span>{fetchError}</span>
+              <button onClick={fetchPosts} className="text-amber-700 font-medium hover:underline">Retry</button>
+            </div>
+          )}
 
           {loading ? (
             <div className="py-12 text-center text-secondary-500">Loading...</div>
