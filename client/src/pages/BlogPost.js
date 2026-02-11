@@ -103,7 +103,7 @@ const BlogPost = () => {
           {/* Header */}
           <header className="mb-8">
             <div className="flex flex-wrap gap-2 mb-4">
-              {post.tags.map((tag) => (
+              {(post.tags || []).map((tag) => (
                 <span
                   key={tag}
                   className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium"

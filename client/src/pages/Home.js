@@ -36,19 +36,19 @@ const Home = () => {
   }, []);
 
   const stats = [
-    { icon: Brain, label: 'Research Papers', value: '1' },
-    { icon: Code, label: 'Projects', value: '3+' },
-    { icon: Database, label: 'Datasets', value: '1' },
-    { icon: TrendingUp, label: 'Years Experience', value: '5+ on Medical AI' }
+    { icon: Brain, label: 'Publications', value: '5+' },
+    { icon: Code, label: 'Key Projects', value: '3' },
+    { icon: Database, label: 'Research Areas', value: '4' },
+    { icon: TrendingUp, label: 'Years AI Experience', value: '3+' }
   ];
 
   const skills = [
-    { name: 'Machine Learning', level: 95 },
-    { name: 'Python', level: 90 },
-    { name: 'Deep Learning', level: 88 },
-    { name: 'Computer Vision', level: 85 },
-    { name: 'Data Science', level: 82 },
-    { name: 'TensorFlow/PyTorch/Pydicom/Niffti', level: 90 }
+    { name: 'Machine Learning & Deep Learning', level: 95 },
+    { name: 'Python', level: 95 },
+    { name: 'Medical Imaging AI', level: 90 },
+    { name: 'PyTorch / TensorFlow', level: 90 },
+    { name: 'Computer Vision (CNNs, Transformers)', level: 88 },
+    { name: 'Clinical Decision Support', level: 85 }
   ];
 
   return (
@@ -67,7 +67,7 @@ const Home = () => {
                 <div className="w-8 h-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
                   <Brain className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-lg font-medium text-primary-600">AI Researcher & Academic</span>
+                <span className="text-lg font-medium text-primary-600">AI Research Scientist | PhD in AI in Medicine | Medical Imaging & Clinical Decision Support</span>
               </div>
               
               <h1 className="text-4xl md:text-6xl font-bold text-secondary-900 mb-6">
@@ -76,9 +76,7 @@ const Home = () => {
               </h1>
               
               <p className="text-xl text-secondary-600 mb-8 leading-relaxed">
-                Passionate AI researcher specializing in machine learning, computer vision, 
-                and healthcare applications. Currently pursuing my academic journey while 
-                contributing to cutting-edge research projects.
+                AI Research Scientist and PhD candidate in Artificial Intelligence in Medicine with 3+ years of experience developing machine learning and deep learning solutions for medical imaging and clinical decision support. Specialized in spine MRI analysis, multimodal data integration, and risk prediction using imaging and patient-reported outcomes. I collaborate across clinical, academic, and international environments (Italy; USA; Ethiopia).
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -90,7 +88,7 @@ const Home = () => {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
                 <a
-                  href="/Alemu%20Sisay%20Nigru-resume.pdf"
+                  href="/Alemu_Sisay_Nigru_CV_Jan2026.pdf"
                   download
                   className="inline-flex items-center px-6 py-3 border border-secondary-300 text-secondary-700 rounded-lg hover:bg-secondary-50 transition-colors font-medium"
                 >
@@ -110,7 +108,7 @@ const Home = () => {
                   <Github className="w-6 h-6" />
                 </a>
                 <a
-                  href="https://www.linkedin.com/in/alemu-sisay-nigru-23612514b/"
+                  href="https://www.linkedin.com/in/alemu-sisay-nigru-23612514b"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-secondary-600 hover:text-primary-600 transition-colors"

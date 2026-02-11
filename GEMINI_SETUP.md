@@ -50,11 +50,14 @@ Visit `http://localhost:3000/ai-agent` to test the AI agent.
 - **Paid Tier**: Higher limits available
 
 ### Model Options
-The system uses `gemini-pro` by default, which is:
+The system uses `gemini-2.5-flash` by default (free tier), which is:
 - ✅ Free to use
-- ✅ High quality responses
-- ✅ Good for conversational AI
-- ✅ Supports multiple languages
+- ✅ Best price-performance
+- ✅ Well-rounded capabilities
+- ✅ 1M token context window
+- ✅ Supports text, image, video, audio
+
+Override with `GEMINI_MODEL` in `.env` (e.g., `gemini-2.5-flash-lite` for faster/cheaper, or `gemini-1.5-flash` for compatibility).
 
 ### Environment Variables
 
@@ -62,6 +65,7 @@ The system uses `gemini-pro` by default, which is:
 |----------|-------------|----------|---------|
 | `GEMINI_API_KEY` | Your Gemini API key | Yes | - |
 | `AI_PROVIDER` | Set to 'gemini' | No | gemini |
+| `GEMINI_MODEL` | Model name (free: gemini-2.5-flash, gemini-2.5-flash-lite, gemini-1.5-flash) | No | gemini-2.5-flash |
 | `PORT` | Server port | No | 5000 |
 
 ## 🌐 Production Deployment
@@ -97,8 +101,8 @@ curl -X POST http://localhost:5000/api/ai-chat \
    - Implement request caching
 
 3. **"Model not available"**
-   - Ensure you're using `gemini-pro`
-   - Check your region has access
+   - Try `GEMINI_MODEL=gemini-1.5-flash` in `.env` (broader compatibility)
+   - Check your region has access at ai.google.dev
    - Try fallback mode temporarily
 
 ### Fallback Mode

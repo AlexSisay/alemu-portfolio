@@ -18,9 +18,9 @@ const Footer = () => {
               <span className="text-xl font-bold">Alemu Sisay Nigru</span>
             </div>
             <p className="text-secondary-300 mb-4 max-w-md">
-              AI Researcher and Academic specializing in machine learning, 
-              computer vision, and healthcare applications. Passionate about 
-              advancing AI technology for social good.
+              AI Research Scientist and PhD candidate in AI in Medicine. 
+              Specialized in spine MRI analysis, multimodal data integration, 
+              and risk prediction for clinical decision support.
             </p>
             <div className="flex space-x-4">
               <a
@@ -30,7 +30,7 @@ const Footer = () => {
                 <Mail className="w-5 h-5" />
               </a>
               <a
-                href="https://linkedin.com/in/alemu-sisay"
+                href="https://linkedin.com/in/alemu-sisay-nigru-23612514b"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-secondary-300 hover:text-primary-400 transition-colors"
@@ -92,11 +92,11 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Research Areas</h3>
             <ul className="space-y-2">
-              <li className="text-secondary-300">Machine Learning</li>
-              <li className="text-secondary-300">Computer Vision</li>
+              <li className="text-secondary-300">Medical Imaging AI</li>
               <li className="text-secondary-300">Healthcare AI</li>
-              <li className="text-secondary-300">Natural Language Processing</li>
-              <li className="text-secondary-300">Data Science</li>
+              <li className="text-secondary-300">Computer Vision</li>
+              <li className="text-secondary-300">Risk Prediction</li>
+              <li className="text-secondary-300">Spine MRI Analysis</li>
             </ul>
           </div>
         </div>

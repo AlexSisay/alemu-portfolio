@@ -104,7 +104,7 @@ const About = () => {
 
                 <div className="mt-6">
                   <a
-                    href="/Alemu Sisay Nigru-resume_June_20_2025.pdf"
+                    href="/Alemu_Sisay_Nigru_CV_Jan2026.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-primary w-full flex items-center justify-center space-x-2"
@@ -205,8 +205,8 @@ const About = () => {
                         <p>
                           Despite financial challenges, cooking with wood and charcoal, and surviving on minimal resources, I persevered. 
                           In 2012, I enrolled at the University of Gondar, where I studied Electrical and Computer Engineering, 
-                          specializing in Communication Engineering. After graduating top of my class with a CGPA of 3.89/4.0, 
-                          I served as an Assistant Lecturer (2016–2017) and completed a Higher Diploma Certificate in Teaching Methods in 2017.
+                          specializing in Communication Engineering. After graduating top of my class with a CGPA of 3.89/4.0 (Gold Medalist), 
+                          I served as an Assistant Lecturer (2016–2019) and completed a Higher Diploma Certificate in Teaching Methods.
                         </p>
                         <p className="mt-3">
                           {/* From Africa to Europe section */}
@@ -256,10 +256,11 @@ const About = () => {
                         <h4 className="text-lg font-semibold text-secondary-800 mb-2">PhD Journey and Global Impact</h4>
                         <p>
                           In December 2022, I started my Ph.D. in Artificial Intelligence in Medicine at the University of Brescia. 
-                          My research focuses on AI-assisted technologies for spine-related pathologies, aiming to enhance clinical 
-                          diagnostic workflows. During this journey, I have served as a visiting Ph.D. student at the Center for Digital 
-                          Health & Implementation Science (CDHI) in Ethiopia (September – Dec 2024), and at New York University 
-                          (April–Oct 2025), where I am contributing to MRI-based spinal pathology grading and domain adaptation research.
+                          My research focuses on AI-driven clinical decision support for personalized management of low back pain, 
+                          aiming to enhance diagnostic workflows for spine-related pathologies. During this journey, I have served as a 
+                          visiting Ph.D. researcher at the Center for Digital Health & Implementation Science (CDHI) in Ethiopia 
+                          (September – December 2024), and at New York University's Video Lab (April – October 2025), where I 
+                          contributed to MRI-based spinal pathology grading and developed deep learning models for lumbar spine pathology detection.
                         </p>
                         <p className="mt-3">
                           I've also deepened my academic toolkit through elite programs such as the Oxford Machine Learning Summer School, 

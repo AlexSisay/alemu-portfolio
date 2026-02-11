@@ -1,86 +1,219 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Users, 
-  BookOpen, 
-  Code, 
-  Award,
-  Calendar,
-  Target,
-  Activity,
-  PieChart
+import {
+  BarChart3,
+  FileText,
+  Plus,
+  Pencil,
+  Trash2,
+  LogIn,
+  LogOut,
+  X
 } from 'lucide-react';
 
-
 const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+const TOKEN_KEY = 'dashboard_token';
 
 const Dashboard = () => {
-  const [analytics, setAnalytics] = useState(null);
+  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
+  const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  const [loginError, setLoginError] = useState('');
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingPost, setEditingPost] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    excerpt: '',
+    content: '',
+    tags: ''
+  });
+  const [saving, setSaving] = useState(false);
+
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/blog`);
+      const data = await res.json();
+      setPosts(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setPosts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/dashboard`);
-        const data = await response.json();
-        setAnalytics(data);
-      } catch (error) {
-        console.error('Error fetching analytics:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAnalytics();
+    fetchPosts();
   }, []);
 
-  if (loading) {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginForm)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Login failed');
+      localStorage.setItem(TOKEN_KEY, data.token);
+      setToken(data.token);
+      setLoginForm({ username: '', password: '' });
+    } catch (err) {
+      setLoginError(err.message || 'Invalid credentials');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    setToken(null);
+    setEditingPost(null);
+    setShowForm(false);
+  };
+
+  const authFetch = (url, options = {}) => {
+    return fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    });
+  };
+
+  const openNewForm = () => {
+    setFormData({ title: '', excerpt: '', content: '', tags: '' });
+    setEditingPost(null);
+    setShowForm(true);
+  };
+
+  const openEditForm = (post) => {
+    setFormData({
+      title: post.title,
+      excerpt: post.excerpt || '',
+      content: post.content || '',
+      tags: (post.tags || []).join(', ')
+    });
+    setEditingPost(post);
+    setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingPost(null);
+  };
+
+  const handleSubmit = async (e) => {
+    e?.preventDefault?.();
+    setSaving(true);
+    try {
+      const payload = {
+        title: formData.title,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        tags: formData.tags.split(',').map((t) => t.trim()).filter(Boolean)
+      };
+      if (editingPost) {
+        await authFetch(`${BACKEND_URL}/api/blog/${editingPost.id}`, {
+          method: 'PUT',
+          body: JSON.stringify(payload)
+        });
+      } else {
+        await authFetch(`${BACKEND_URL}/api/blog`, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+      }
+      fetchPosts();
+      closeForm();
+    } catch (err) {
+      if (err.message?.includes('401') || err.message?.includes('Invalid token')) {
+        handleLogout();
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this post?')) return;
+    try {
+      await authFetch(`${BACKEND_URL}/api/blog/${id}`, { method: 'DELETE' });
+      fetchPosts();
+    } catch (err) {
+      if (err.message?.includes('401')) handleLogout();
+    }
+  };
+
+  // Not logged in: show login form
+  if (!token) {
     return (
-      <div className="pt-16 min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 flex items-center justify-center px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md"
+        >
+          <div className="card">
+            <div className="flex items-center justify-center space-x-2 mb-8">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-white" />
+              </div>
+              <h1 className="text-2xl font-bold gradient-text">Dashboard</h1>
+            </div>
+            <p className="text-secondary-600 text-center mb-6">
+              Sign in to post news and updates to your blog.
+            </p>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-1">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  value={loginForm.username}
+                  onChange={(e) =>
+                    setLoginForm((p) => ({ ...p, username: e.target.value }))
+                  }
+                  className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={loginForm.password}
+                  onChange={(e) =>
+                    setLoginForm((p) => ({ ...p, password: e.target.value }))
+                  }
+                  className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              {loginError && (
+                <p className="text-red-600 text-sm">{loginError}</p>
+              )}
+              <button type="submit" className="btn-primary w-full flex items-center justify-center space-x-2">
+                <LogIn className="w-4 h-4" />
+                <span>Sign In</span>
+              </button>
+            </form>
+          </div>
+          <p className="text-center text-sm text-secondary-500 mt-4">
+            Run <code className="bg-secondary-100 px-1 rounded">node createAdmin.js</code> to create an admin user.
+          </p>
+        </motion.div>
       </div>
     );
   }
 
-  const stats = [
-    {
-      title: "Publications",
-      value: analytics?.totalPublications || 0,
-      icon: BookOpen,
-      color: "from-blue-500 to-blue-600",
-      change: "+12%",
-      changeType: "positive"
-    },
-    {
-      title: "Projects",
-      value: analytics?.totalProjects || 0,
-      icon: Code,
-      color: "from-green-500 to-green-600",
-      change: "+8%",
-      changeType: "positive"
-    },
-    {
-      title: "Years Experience",
-      value: analytics?.yearsOfExperience || 0,
-      icon: Award,
-      color: "from-purple-500 to-purple-600",
-      change: "+1",
-      changeType: "positive"
-    },
-    {
-      title: "Blog Posts",
-      value: analytics?.blogPosts || 0,
-      icon: Users,
-      color: "from-orange-500 to-orange-600",
-      change: "+3",
-      changeType: "positive"
-    }
-  ];
-
-  const researchAreas = analytics?.researchAreas || [];
-
+  // Logged in: blog management dashboard
   return (
     <div className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       <div className="container-max section-padding">
@@ -88,187 +221,206 @@ const Dashboard = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8"
         >
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
               <BarChart3 className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold gradient-text">
-              Analytics Dashboard
-            </h1>
+            <div>
+              <h1 className="text-2xl font-bold gradient-text">Blog Manager</h1>
+              <p className="text-secondary-600 text-sm">Post news and updates</p>
+            </div>
           </div>
-          <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
-            Overview of academic achievements, research metrics, and professional growth.
-          </p>
+          <div className="flex items-center space-x-3">
+            <Link
+              to="/blog"
+              className="inline-flex items-center px-4 py-2 border border-secondary-300 rounded-lg text-secondary-700 hover:bg-secondary-50 transition-colors"
+            >
+              View Blog
+            </Link>
+            <button
+              onClick={openNewForm}
+              className="btn-primary inline-flex items-center space-x-2"
+            >
+              <Plus className="w-4 h-4" />
+              <span>New Post</span>
+            </button>
+            <button
+              onClick={handleLogout}
+              className="p-2 text-secondary-600 hover:text-red-600 transition-colors"
+              title="Sign out"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
         </motion.div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="card hover:shadow-xl transition-all duration-300"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-lg flex items-center justify-center`}>
-                  <stat.icon className="w-6 h-6 text-white" />
-                </div>
-                <div className={`flex items-center space-x-1 text-sm font-medium ${
-                  stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  <TrendingUp className="w-4 h-4" />
-                  <span>{stat.change}</span>
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-secondary-800 mb-1">
-                {stat.value}
-              </h3>
-              <p className="text-secondary-600">{stat.title}</p>
-            </motion.div>
-          ))}
-        </div>
+        {/* Post list */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="card"
+        >
+          <h2 className="text-lg font-semibold text-secondary-800 mb-4 flex items-center space-x-2">
+            <FileText className="w-5 h-5 text-primary-600" />
+            <span>Your Posts ({posts.length})</span>
+          </h2>
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Research Areas Chart */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-            className="card"
-          >
-            <div className="flex items-center space-x-2 mb-6">
-              <PieChart className="w-6 h-6 text-primary-600" />
-              <h3 className="text-xl font-semibold text-secondary-800">Research Areas</h3>
+          {loading ? (
+            <div className="py-12 text-center text-secondary-500">Loading...</div>
+          ) : posts.length === 0 ? (
+            <div className="py-12 text-center text-secondary-500">
+              <FileText className="w-12 h-12 mx-auto mb-3 text-secondary-300" />
+              <p>No posts yet. Click &quot;New Post&quot; to create one.</p>
             </div>
-            <div className="space-y-4">
-              {researchAreas.map((area, index) => {
-                const percentage = Math.floor(Math.random() * 30) + 20; // Mock data
-                return (
-                  <div key={index} className="flex items-center justify-between">
-                    <span className="text-secondary-700 font-medium">{area}</span>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-32 bg-secondary-200 rounded-full h-2">
-                        <div
-                          className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-1000"
-                          style={{ width: `${percentage}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-secondary-600 w-8">{percentage}%</span>
-                    </div>
+          ) : (
+            <div className="space-y-3">
+              {posts.map((post) => (
+                <div
+                  key={post.id}
+                  className="flex items-center justify-between p-4 bg-secondary-50 rounded-lg hover:bg-secondary-100 transition-colors"
+                >
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-medium text-secondary-800 truncate">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-secondary-500">
+                      {new Date(post.date || post.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
-                );
-              })}
-            </div>
-          </motion.div>
-
-          {/* Activity Timeline */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6 }}
-            className="card"
-          >
-            <div className="flex items-center space-x-2 mb-6">
-              <Activity className="w-6 h-6 text-primary-600" />
-              <h3 className="text-xl font-semibold text-secondary-800">Recent Activity</h3>
-            </div>
-            <div className="space-y-4">
-              {[
-                { action: "Published new research paper", time: "2 days ago", type: "publication" },
-                { action: "Completed AI project milestone", time: "1 week ago", type: "project" },
-                { action: "Presented at conference", time: "2 weeks ago", type: "presentation" },
-                { action: "Started new research collaboration", time: "1 month ago", type: "collaboration" }
-              ].map((activity, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-primary-500 rounded-full mt-2"></div>
-                  <div className="flex-1">
-                    <p className="text-secondary-800 font-medium">{activity.action}</p>
-                    <p className="text-sm text-secondary-500">{activity.time}</p>
+                  <div className="flex items-center space-x-2 ml-4">
+                    <Link
+                      to={`/blog/${post.id}`}
+                      className="text-primary-600 hover:text-primary-700 text-sm"
+                    >
+                      View
+                    </Link>
+                    <button
+                      onClick={() => openEditForm(post)}
+                      className="p-2 text-secondary-600 hover:text-primary-600 transition-colors"
+                      title="Edit"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(post.id)}
+                      className="p-2 text-secondary-600 hover:text-red-600 transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
-          </motion.div>
-        </div>
-
-        {/* Goals and Targets */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="card mb-12"
-        >
-          <div className="flex items-center space-x-2 mb-6">
-            <Target className="w-6 h-6 text-primary-600" />
-            <h3 className="text-xl font-semibold text-secondary-800">Goals & Targets</h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { goal: "Research Papers", current: 5, target: 10, icon: BookOpen },
-              { goal: "Conference Presentations", current: 3, target: 8, icon: Users },
-              { goal: "Collaborations", current: 2, target: 5, icon: Award }
-            ].map((item, index) => {
-              const progress = (item.current / item.target) * 100;
-              const Icon = item.icon;
-              return (
-                <div key={index} className="text-center">
-                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-8 h-8 text-primary-600" />
-                  </div>
-                  <h4 className="text-lg font-semibold text-secondary-800 mb-2">{item.goal}</h4>
-                  <div className="text-2xl font-bold text-primary-600 mb-2">
-                    {item.current}/{item.target}
-                  </div>
-                  <div className="w-full bg-secondary-200 rounded-full h-2">
-                    <div
-                      className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-1000"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                  <p className="text-sm text-secondary-600 mt-2">{Math.round(progress)}% Complete</p>
-                </div>
-              );
-            })}
-          </div>
+          )}
         </motion.div>
 
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {[
-            { title: "Add Publication", icon: BookOpen, color: "from-blue-500 to-blue-600" },
-            { title: "Update Profile", icon: Users, color: "from-green-500 to-green-600" },
-            { title: "New Project", icon: Code, color: "from-purple-500 to-purple-600" },
-            { title: "Schedule Meeting", icon: Calendar, color: "from-orange-500 to-orange-600" }
-          ].map((action, index) => {
-            const Icon = action.icon;
-            return (
-              <button
-                key={index}
-                className="card hover:shadow-xl transition-all duration-300 text-left group"
-              >
-                <div className={`w-12 h-12 bg-gradient-to-r ${action.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-secondary-800 group-hover:text-primary-600 transition-colors duration-200">
-                  {action.title}
+        {/* Create/Edit modal */}
+        {showForm && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-secondary-200">
+                <h3 className="text-xl font-semibold text-secondary-800">
+                  {editingPost ? 'Edit Post' : 'New Post'}
                 </h3>
-              </button>
-            );
-          })}
-        </motion.div>
+                <button
+                  onClick={closeForm}
+                  className="p-2 text-secondary-500 hover:text-secondary-700"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form id="post-form" onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+                <div className="p-6 overflow-y-auto space-y-4 flex-1 min-h-0">
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-1">
+                      Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.title}
+                      onChange={(e) =>
+                        setFormData((p) => ({ ...p, title: e.target.value }))
+                      }
+                      className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      required
+                      placeholder="Post title"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-1">
+                      Excerpt (short summary)
+                    </label>
+                    <textarea
+                      value={formData.excerpt}
+                      onChange={(e) =>
+                        setFormData((p) => ({ ...p, excerpt: e.target.value }))
+                      }
+                      rows={2}
+                      className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      placeholder="Brief summary for the blog listing"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-1">
+                      Content *
+                    </label>
+                    <textarea
+                      value={formData.content}
+                      onChange={(e) =>
+                        setFormData((p) => ({ ...p, content: e.target.value }))
+                      }
+                      rows={12}
+                      className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 font-mono text-sm"
+                      required
+                      placeholder="Write your post content here..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-1">
+                      Tags (comma-separated)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.tags}
+                      onChange={(e) =>
+                        setFormData((p) => ({ ...p, tags: e.target.value }))
+                      }
+                      className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      placeholder="AI, Research, Healthcare"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3 p-6 border-t border-secondary-200 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={closeForm}
+                    className="px-4 py-2 border border-secondary-300 rounded-lg text-secondary-700 hover:bg-secondary-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="btn-primary px-6 py-2 disabled:opacity-50"
+                  >
+                    {saving ? 'Saving...' : editingPost ? 'Update' : 'Publish'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default Dashboard; 
+export default Dashboard;
