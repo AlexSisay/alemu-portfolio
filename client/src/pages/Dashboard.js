@@ -9,7 +9,10 @@ import {
   Trash2,
   LogIn,
   LogOut,
-  X
+  X,
+  Globe,
+  Users,
+  Eye
 } from 'lucide-react';
 
 const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
@@ -31,6 +34,22 @@ const Dashboard = () => {
     tags: ''
   });
   const [saving, setSaving] = useState(false);
+  const [analytics, setAnalytics] = useState({ total: 0, uniqueVisitors: 0, byCountry: [] });
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+
+  const fetchAnalytics = async () => {
+    if (!token) return;
+    setAnalyticsLoading(true);
+    try {
+      const res = await authFetch(`${BACKEND_URL}/api/analytics/stats`);
+      const data = await res.json();
+      if (res.ok) setAnalytics(data);
+    } catch {
+      /* ignore */
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
 
   const fetchPosts = async () => {
     setFetchError('');
@@ -52,6 +71,10 @@ const Dashboard = () => {
   useEffect(() => {
     fetchPosts();
   }, []);
+
+  useEffect(() => {
+    if (token) fetchAnalytics();
+  }, [token]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -268,6 +291,73 @@ const Dashboard = () => {
               <LogOut className="w-5 h-5" />
             </button>
           </div>
+        </motion.div>
+
+        {/* Analytics */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="card mb-6"
+        >
+          <h2 className="text-lg font-semibold text-secondary-800 mb-4 flex items-center space-x-2">
+            <Globe className="w-5 h-5 text-primary-600" />
+            <span>Visit Stats</span>
+            <button
+              onClick={fetchAnalytics}
+              disabled={analyticsLoading}
+              className="ml-auto text-sm text-primary-600 hover:text-primary-700 disabled:opacity-50"
+            >
+              Refresh
+            </button>
+          </h2>
+          {analyticsLoading ? (
+            <div className="py-8 text-center text-secondary-500">Loading...</div>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div className="p-4 bg-secondary-50 rounded-lg">
+                  <div className="flex items-center space-x-2 text-secondary-600 mb-1">
+                    <Eye className="w-4 h-4" />
+                    <span className="text-sm">Total visits</span>
+                  </div>
+                  <div className="text-2xl font-bold text-primary-600">{analytics.total ?? 0}</div>
+                </div>
+                <div className="p-4 bg-secondary-50 rounded-lg">
+                  <div className="flex items-center space-x-2 text-secondary-600 mb-1">
+                    <Users className="w-4 h-4" />
+                    <span className="text-sm">Unique visitors</span>
+                  </div>
+                  <div className="text-2xl font-bold text-primary-600">{analytics.uniqueVisitors ?? 0}</div>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-secondary-700 mb-2">By country</h3>
+                {!analytics.byCountry?.length ? (
+                  <p className="text-secondary-500 text-sm py-2">No data yet. Visits will appear here.</p>
+                ) : (
+                  <div className="max-h-48 overflow-y-auto rounded-lg border border-secondary-200">
+                    <table className="w-full text-sm">
+                      <thead className="bg-secondary-50 sticky top-0">
+                        <tr>
+                          <th className="text-left py-2 px-3 font-medium text-secondary-700">Country</th>
+                          <th className="text-right py-2 px-3 font-medium text-secondary-700">Visits</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {analytics.byCountry.map(({ country, count }) => (
+                          <tr key={country} className="border-t border-secondary-100 hover:bg-secondary-50">
+                            <td className="py-2 px-3">{country}</td>
+                            <td className="py-2 px-3 text-right font-medium">{count}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </motion.div>
 
         {/* Post list */}

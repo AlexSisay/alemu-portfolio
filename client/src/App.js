@@ -1,6 +1,25 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+
+function TrackVisit() {
+  const location = useLocation();
+  const lastTracked = useRef({ path: '', time: 0 });
+  useEffect(() => {
+    const path = location.pathname || '/';
+    const now = Date.now();
+    if (path === lastTracked.current.path && now - lastTracked.current.time < 60000) return;
+    lastTracked.current = { path, time: now };
+    fetch(`${BACKEND_URL}/api/analytics/track`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path })
+    }).catch(() => {});
+  }, [location.pathname]);
+  return null;
+}
 
 // Components
 import Navbar from './components/Navbar';
@@ -17,6 +36,7 @@ import AIAgent from './pages/AIAgent';
 function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
+      <TrackVisit />
       <Navbar />
       <AnimatePresence mode="wait">
         <Routes>
