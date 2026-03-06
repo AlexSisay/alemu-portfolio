@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Menu, X, Brain, Home, User, FileText, BarChart3 } from 'lucide-react';
+import { Menu, X, Brain, Home, User, FileText } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +20,6 @@ const Navbar = () => {
     { name: 'Home', path: '/', icon: Home },
     { name: 'About', path: '/about', icon: User },
     { name: 'Blog', path: '/blog', icon: FileText },
-    { name: 'Dashboard', path: '/dashboard', icon: BarChart3 },
     { name: 'AI Agent', path: '/ai-agent', icon: Brain },
   ];
 

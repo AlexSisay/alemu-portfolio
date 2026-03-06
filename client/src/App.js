@@ -34,10 +34,12 @@ import Dashboard from './pages/Dashboard';
 import AIAgent from './pages/AIAgent';
 
 function App() {
+  const location = useLocation();
+  const isDashboard = location.pathname === '/dashboard' || location.pathname === '/alemu-portfolio/dashboard';
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       <TrackVisit />
-      <Navbar />
+      {!isDashboard && <Navbar />}
       <AnimatePresence mode="wait">
         <Routes>
           <Route path="/" element={
@@ -102,7 +104,7 @@ function App() {
           } />
         </Routes>
       </AnimatePresence>
-      <Footer />
+      {!isDashboard && <Footer />}
     </div>
   );
 }
