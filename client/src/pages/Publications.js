@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
+import { BookOpen, ExternalLink, ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
 import { BACKEND_URL } from '../config';
 
 // Parse abstract into styled sections (Background, Methods, Results, etc.)
@@ -197,47 +197,57 @@ const PublicationCard = ({ pub, index }) => {
 const Publications = () => {
   const [items, setItems] = useState(publications);
   const [loading, setLoading] = useState(true);
+  const [usedFallback, setUsedFallback] = useState(false);
+
+  const fetchPubs = React.useCallback(async (retryCount = 0) => {
+    const maxRetries = 2;
+    try {
+      // Pre-wake: hit health first so Render backend spins up
+      try {
+        const wakeCtrl = new AbortController();
+        const wakeTimeout = setTimeout(() => wakeCtrl.abort(), 20000);
+        await fetch(`${BACKEND_URL}/api/health`, { cache: 'no-store', signal: wakeCtrl.signal });
+        clearTimeout(wakeTimeout);
+      } catch {
+        /* ignore */
+      }
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 90000);
+      const res = await fetch(`${BACKEND_URL}/api/publications?t=${Date.now()}`, {
+        cache: 'no-store',
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+      const raw = await res.json().catch(() => ({}));
+      const data = Array.isArray(raw) ? raw : (raw?.publications ?? raw?.data ?? []);
+      if (res.ok && Array.isArray(data)) {
+        const apiPubs = data.map((p) => ({ ...p, id: p.id || p._id }));
+        const apiTitles = new Set(apiPubs.map((p) => (p.title || '').toLowerCase()));
+        const extraFromStatic = publications.filter((p) => !apiTitles.has((p.title || '').toLowerCase()));
+        setItems([...apiPubs, ...extraFromStatic]);
+        setUsedFallback(false);
+        return;
+      }
+      // res.ok false (500, etc.) - retry
+      if (retryCount < maxRetries) {
+        setTimeout(() => fetchPubs(retryCount + 1), 4000);
+        return;
+      }
+      setUsedFallback(true);
+    } catch {
+      if (retryCount < maxRetries) {
+        setTimeout(() => fetchPubs(retryCount + 1), 4000);
+        return;
+      }
+      setUsedFallback(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchPubs = async (retry = false) => {
-      try {
-        // Pre-wake: hit health first so Render backend spins up before publications fetch
-        try {
-          const wakeCtrl = new AbortController();
-          const wakeTimeout = setTimeout(() => wakeCtrl.abort(), 15000);
-          await fetch(`${BACKEND_URL}/api/health`, { cache: 'no-store', signal: wakeCtrl.signal });
-          clearTimeout(wakeTimeout);
-        } catch {
-          /* ignore - publications fetch will retry if needed */
-        }
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 90000);
-        const res = await fetch(`${BACKEND_URL}/api/publications`, {
-          cache: 'no-store',
-          signal: controller.signal
-        });
-        clearTimeout(timeout);
-        const raw = await res.json();
-        const data = Array.isArray(raw) ? raw : (raw?.publications ?? raw?.data ?? []);
-        if (res.ok && Array.isArray(data)) {
-          const apiPubs = data.map((p) => ({ ...p, id: p.id || p._id }));
-          // Merge: API (from DB) + static items not already in API (by title)
-          const apiTitles = new Set(apiPubs.map((p) => (p.title || '').toLowerCase()));
-          const extraFromStatic = publications.filter((p) => !apiTitles.has((p.title || '').toLowerCase()));
-          setItems([...apiPubs, ...extraFromStatic]);
-        }
-      } catch (err) {
-        if (!retry) {
-          setTimeout(() => fetchPubs(true), 3000);
-          return;
-        }
-        // Use static fallback on error (backend down, cold start, CORS, etc.)
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchPubs();
-  }, []);
+  }, [fetchPubs]);
 
   const byYear = items.reduce((acc, pub) => {
     if (!acc[pub.year]) acc[pub.year] = [];
@@ -265,6 +275,29 @@ const Publications = () => {
               Peer-reviewed and preprint research in AI, medical imaging, and spine care.
             </p>
           </motion.div>
+
+          {usedFallback && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-4 rounded-lg bg-amber-50 border border-amber-200 flex flex-wrap items-center justify-between gap-3"
+            >
+              <p className="text-amber-800 text-sm">
+                Some publications may not be shown. The server may be starting up—try refreshing.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoading(true);
+                  setUsedFallback(false);
+                  fetchPubs(0);
+                }}
+                className="px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-700 transition-colors"
+              >
+                Refresh
+              </button>
+            </motion.div>
+          )}
 
           <div className="space-y-12">
             {years.map((year) => (
