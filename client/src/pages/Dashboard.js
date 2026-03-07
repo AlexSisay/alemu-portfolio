@@ -95,9 +95,12 @@ const Dashboard = () => {
       setToken(data.token);
       setLoginForm({ username: '', password: '' });
     } catch (err) {
-      setLoginError(err.name === 'AbortError'
-        ? 'Backend is waking up (Render free tier). Wait 30–60 seconds and try again.'
-        : (err.message || 'Invalid credentials'));
+      const msg = err.message || '';
+      if (err.name === 'AbortError' || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+        setLoginError('Backend unreachable. If using Render free tier: open the backend health URL in a new tab, wait 50–60 seconds for it to wake, then try again.');
+      } else {
+        setLoginError(msg || 'Invalid credentials');
+      }
     }
   };
 
