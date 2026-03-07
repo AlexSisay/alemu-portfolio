@@ -61,15 +61,24 @@ const Dashboard = () => {
     link: ''
   });
   const [pubSaving, setPubSaving] = useState(false);
+  const [pubError, setPubError] = useState('');
+
+  const BACKEND_UNREACHABLE_MSG = 'Could not reach backend. If using Render free tier, wait 30–60 seconds and refresh.';
+  const wakeBackendUrl = `${BACKEND_URL}/api/health`;
 
   const fetchPublications = async () => {
     setPubLoading(true);
+    setPubError('');
     try {
-      const res = await fetch(`${BACKEND_URL}/api/publications`);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 90000);
+      const res = await fetch(`${BACKEND_URL}/api/publications`, { signal: controller.signal });
+      clearTimeout(timeout);
       const data = await res.json();
       setPublications(Array.isArray(data) ? data : []);
     } catch {
       setPublications([]);
+      setPubError(BACKEND_UNREACHABLE_MSG);
     } finally {
       setPubLoading(false);
     }
@@ -268,6 +277,7 @@ const Dashboard = () => {
   const handlePubSubmit = async (e) => {
     e?.preventDefault?.();
     setPubSaving(true);
+    setPubError('');
     try {
       const highlights = (pubFormData.highlights || '')
         .split('\n')
@@ -283,22 +293,29 @@ const Dashboard = () => {
         abstract: pubFormData.abstract,
         link: pubFormData.link || ''
       };
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 90000);
       if (editingPub) {
         await authFetch(`${BACKEND_URL}/api/publications/${editingPub.id}`, {
           method: 'PUT',
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: controller.signal
         });
       } else {
         await authFetch(`${BACKEND_URL}/api/publications`, {
           method: 'POST',
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: controller.signal
         });
       }
+      clearTimeout(timeout);
       fetchPublications();
       closePubForm();
     } catch (err) {
       if (err.message?.includes('401') || err.message?.includes('Invalid token')) {
         handleLogout();
+      } else if (err.name === 'AbortError' || err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
+        setPubError(BACKEND_UNREACHABLE_MSG);
       }
     } finally {
       setPubSaving(false);
@@ -617,6 +634,16 @@ const Dashboard = () => {
               >
                 View Page
               </Link>
+              {pubError && (
+                <a
+                  href={BACKEND_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-amber-600 hover:text-amber-700"
+                >
+                  Wake up backend
+                </a>
+              )}
               <button
                 onClick={openNewPubForm}
                 className="btn-primary inline-flex items-center space-x-1 text-sm py-1.5 px-3"
@@ -626,6 +653,24 @@ const Dashboard = () => {
               </button>
             </div>
           </h2>
+          {pubError && (
+            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm flex flex-wrap items-center justify-between gap-2">
+              <span>{pubError}</span>
+              <div className="flex items-center gap-2">
+                <a
+                  href={wakeBackendUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-700 font-medium hover:underline"
+                >
+                  Wake up backend
+                </a>
+                <button onClick={fetchPublications} className="text-amber-700 font-medium hover:underline">
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
           {pubLoading ? (
             <div className="py-8 text-center text-secondary-500">Loading...</div>
           ) : publications.length === 0 ? (
