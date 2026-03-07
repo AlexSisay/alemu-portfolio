@@ -11,7 +11,7 @@ import {
   MessageCircle
 } from 'lucide-react';
 
-const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+import { BACKEND_URL } from '../config';
 
 const BlogPost = () => {
   const { id } = useParams();

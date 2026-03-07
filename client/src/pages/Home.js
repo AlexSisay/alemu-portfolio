@@ -16,7 +16,7 @@ import {
   Award
 } from 'lucide-react';
 
-const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+import { BACKEND_URL } from '../config';
 
 const Home = () => {
   const [cvData, setCvData] = useState(null);

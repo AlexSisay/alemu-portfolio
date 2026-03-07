@@ -17,8 +17,7 @@ import {
   TrendingUp,
   BookOpen
 } from 'lucide-react';
-
-const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+import { BACKEND_URL } from '../config';
 const TOKEN_KEY = 'dashboard_token';
 
 const Dashboard = () => {
@@ -200,6 +199,7 @@ const Dashboard = () => {
   const handleSubmit = async (e) => {
     e?.preventDefault?.();
     setSaving(true);
+    setFetchError('');
     try {
       const payload = {
         title: formData.title,
@@ -207,22 +207,22 @@ const Dashboard = () => {
         content: formData.content,
         tags: formData.tags.split(',').map((t) => t.trim()).filter(Boolean)
       };
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 90000);
+      const opts = { method: editingPost ? 'PUT' : 'POST', body: JSON.stringify(payload), signal: controller.signal };
       if (editingPost) {
-        await authFetch(`${BACKEND_URL}/api/blog/${editingPost.id}`, {
-          method: 'PUT',
-          body: JSON.stringify(payload)
-        });
+        await authFetch(`${BACKEND_URL}/api/blog/${editingPost.id}`, { ...opts, method: 'PUT' });
       } else {
-        await authFetch(`${BACKEND_URL}/api/blog`, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
+        await authFetch(`${BACKEND_URL}/api/blog`, { ...opts, method: 'POST' });
       }
+      clearTimeout(timeout);
       fetchPosts();
       closeForm();
     } catch (err) {
       if (err.message?.includes('401') || err.message?.includes('Invalid token')) {
         handleLogout();
+      } else if (err.name === 'AbortError' || err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
+        setFetchError(BACKEND_UNREACHABLE_MSG);
       }
     } finally {
       setSaving(false);

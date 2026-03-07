@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Brain, User, Bot, Loader2, Sparkles, Info } from 'lucide-react';
 
-const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+import { BACKEND_URL } from '../config';
 
 const AIAgent = () => {
   const [messages, setMessages] = useState([

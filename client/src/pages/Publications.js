@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
+import { BACKEND_URL } from '../config';
 
 // Parse abstract into styled sections (Background, Methods, Results, etc.)
 const parseAbstractSections = (text) => {
@@ -194,7 +195,27 @@ const PublicationCard = ({ pub, index }) => {
 };
 
 const Publications = () => {
-  const byYear = publications.reduce((acc, pub) => {
+  const [items, setItems] = useState(publications);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPubs = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/publications`);
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setItems(data.map((p) => ({ ...p, id: p.id || p._id })));
+        }
+      } catch {
+        // Use static fallback on error (backend down, etc.)
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPubs();
+  }, []);
+
+  const byYear = items.reduce((acc, pub) => {
     if (!acc[pub.year]) acc[pub.year] = [];
     acc[pub.year].push(pub);
     return acc;

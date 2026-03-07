@@ -10,8 +10,7 @@ import BlogPost from './pages/BlogPost';
 import Publications from './pages/Publications';
 import Dashboard from './pages/Dashboard';
 import AIAgent from './pages/AIAgent';
-
-const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
+import { BACKEND_URL } from './config';
 
 function TrackVisit() {
   const location = useLocation();
