@@ -2,7 +2,20 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 
-// Helper to bold author name variants
+// Parse abstract into styled sections (Background, Methods, Results, etc.)
+const parseAbstractSections = (text) => {
+  if (!text || typeof text !== 'string') return [{ label: 'Abstract', content: text }];
+  const pattern = /(Background(?:\s+(?:Context|and Objective))?|Purpose|Objective|Aims?|Study Design(?:\s*\/\s*Setting)?|Patient Sample|Participants?|Outcome Measures|Physiologic Measures|Self-report Measures|Design|Setting|Data (?:Collection|Analysis)|Methods?|Results?|Findings|Key Findings|Main Results|Conclusions?|Implications|Clinical Relevance|Summary|Introduction|Discussion):\s*/gi;
+  const parts = text.split(pattern);
+  const sections = [];
+  for (let i = 1; i < parts.length; i += 2) {
+    const label = parts[i]?.trim().replace(/:$/, '');
+    const content = parts[i + 1]?.trim();
+    if (label && content) sections.push({ label, content });
+  }
+  return sections.length ? sections : [{ label: 'Abstract', content: text }];
+};
+
 const boldAuthor = (text) => {
   const variants = [
     'Alemu Sisay Nigru',
@@ -157,7 +170,23 @@ const PublicationCard = ({ pub, index }) => {
       </div>
       {expanded && (
         <div className="mt-4 pt-4 border-t border-secondary-200">
-          <p className="text-secondary-700 text-sm leading-relaxed whitespace-pre-wrap">{pub.abstract}</p>
+          <div className="rounded-xl bg-gradient-to-br from-white via-secondary-50/50 to-primary-50/40 border border-primary-100/80 p-6 shadow-md">
+            <h5 className="text-sm font-bold uppercase tracking-widest text-primary-600 mb-5">Full Abstract</h5>
+            <div className="space-y-7">
+              {parseAbstractSections(pub.abstract).map((section, i) => (
+                <div key={i} className={section.label && section.label !== 'Abstract' ? 'pl-5 pr-2 py-3 border-l-4 border-primary-400 rounded-r bg-white/60' : 'py-1'}>
+                  {section.label && section.label !== 'Abstract' && (
+                    <span className="text-sm font-semibold uppercase tracking-wider text-primary-700 block mb-2">
+                      {section.label}
+                    </span>
+                  )}
+                  <p className="text-secondary-800 text-[15px] leading-[1.7] font-normal">
+                    {section.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </motion.div>
