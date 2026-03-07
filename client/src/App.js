@@ -1,6 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import About from './pages/About';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
+import Publications from './pages/Publications';
+import Dashboard from './pages/Dashboard';
+import AIAgent from './pages/AIAgent';
 
 const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
 
@@ -20,19 +29,6 @@ function TrackVisit() {
   }, [location.pathname]);
   return null;
 }
-
-// Components
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-
-// Pages
-import Home from './pages/Home';
-import About from './pages/About';
-import Blog from './pages/Blog';
-import BlogPost from './pages/BlogPost';
-import Publications from './pages/Publications';
-import Dashboard from './pages/Dashboard';
-import AIAgent from './pages/AIAgent';
 
 function App() {
   const location = useLocation();
