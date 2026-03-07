@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, ExternalLink, ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
+import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import { BACKEND_URL } from '../config';
 
 // Parse abstract into styled sections (Background, Methods, Results, etc.)
@@ -276,6 +276,9 @@ const Publications = () => {
             </p>
           </motion.div>
 
+          {loading && (
+            <p className="mb-6 text-secondary-600 animate-pulse">Loading publications…</p>
+          )}
           {usedFallback && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
