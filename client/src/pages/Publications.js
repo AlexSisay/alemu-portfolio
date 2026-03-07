@@ -199,16 +199,39 @@ const Publications = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPubs = async () => {
+    const fetchPubs = async (retry = false) => {
       try {
-        const res = await fetch(`${BACKEND_URL}/api/publications`, { cache: 'no-store' });
-        const data = await res.json();
-        // Always use API data when fetch succeeds (source of truth from Dashboard)
-        if (res.ok && Array.isArray(data)) {
-          setItems(data.map((p) => ({ ...p, id: p.id || p._id })));
+        // Pre-wake: hit health first so Render backend spins up before publications fetch
+        try {
+          const wakeCtrl = new AbortController();
+          const wakeTimeout = setTimeout(() => wakeCtrl.abort(), 15000);
+          await fetch(`${BACKEND_URL}/api/health`, { cache: 'no-store', signal: wakeCtrl.signal });
+          clearTimeout(wakeTimeout);
+        } catch {
+          /* ignore - publications fetch will retry if needed */
         }
-      } catch {
-        // Use static fallback on error (backend down, etc.)
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 90000);
+        const res = await fetch(`${BACKEND_URL}/api/publications`, {
+          cache: 'no-store',
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        const raw = await res.json();
+        const data = Array.isArray(raw) ? raw : (raw?.publications ?? raw?.data ?? []);
+        if (res.ok && Array.isArray(data)) {
+          const apiPubs = data.map((p) => ({ ...p, id: p.id || p._id }));
+          // Merge: API (from DB) + static items not already in API (by title)
+          const apiTitles = new Set(apiPubs.map((p) => (p.title || '').toLowerCase()));
+          const extraFromStatic = publications.filter((p) => !apiTitles.has((p.title || '').toLowerCase()));
+          setItems([...apiPubs, ...extraFromStatic]);
+        }
+      } catch (err) {
+        if (!retry) {
+          setTimeout(() => fetchPubs(true), 3000);
+          return;
+        }
+        // Use static fallback on error (backend down, cold start, CORS, etc.)
       } finally {
         setLoading(false);
       }
