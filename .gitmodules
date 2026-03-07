@@ -1,0 +1,3 @@
+[submodule "alemu-portfolio-backend"]
+	path = alemu-portfolio-backend
+	url = https://github.com/AlexSisay/alemu-portfolio-backend.git
