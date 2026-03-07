@@ -5,7 +5,6 @@ import {
   Briefcase, 
   Award, 
   Code, 
-  BookOpen, 
   Users,
   Mail,
   Linkedin,
@@ -407,34 +406,6 @@ const About = () => {
                       className="bg-white px-4 py-2 rounded-lg border border-secondary-200 text-center hover:border-primary-300 hover:shadow-md transition-all duration-200"
                     >
                       <span className="text-secondary-700 font-medium">{skill}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Publications */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                viewport={{ once: true }}
-                className="mb-8"
-              >
-                <h3 className="text-2xl font-bold mb-6 flex items-center space-x-2">
-                  <BookOpen className="w-6 h-6 text-primary-600" />
-                  <span>Publications</span>
-                </h3>
-                <div className="space-y-4">
-                  {profile.publications.map((pub, index) => (
-                    <div key={index} className="card">
-                      <h4 className="text-lg font-semibold text-secondary-800 mb-2">
-                        {pub.title}
-                      </h4>
-                      <p className="text-primary-600 mb-1">{pub.journal}</p>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-secondary-500">{pub.year}</span>
-                        <span className="text-sm text-primary-600">DOI: {pub.doi}</span>
-                      </div>
                     </div>
                   ))}
                 </div>

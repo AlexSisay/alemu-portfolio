@@ -12,7 +12,10 @@ import {
   X,
   Globe,
   Users,
-  Eye
+  Eye,
+  Calendar,
+  TrendingUp,
+  BookOpen
 } from 'lucide-react';
 
 const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
@@ -34,8 +37,43 @@ const Dashboard = () => {
     tags: ''
   });
   const [saving, setSaving] = useState(false);
-  const [analytics, setAnalytics] = useState({ total: 0, uniqueVisitors: 0, byCountry: [] });
+  const [analytics, setAnalytics] = useState({
+    total: 0,
+    uniqueVisitors: 0,
+    byCountry: [],
+    byWeek: [],
+    byMonth: [],
+    byCountryByMonth: []
+  });
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [publications, setPublications] = useState([]);
+  const [pubLoading, setPubLoading] = useState(true);
+  const [showPubForm, setShowPubForm] = useState(false);
+  const [editingPub, setEditingPub] = useState(null);
+  const [pubFormData, setPubFormData] = useState({
+    title: '',
+    authors: '',
+    journal: '',
+    year: new Date().getFullYear(),
+    status: 'Published',
+    highlights: '',
+    abstract: '',
+    link: ''
+  });
+  const [pubSaving, setPubSaving] = useState(false);
+
+  const fetchPublications = async () => {
+    setPubLoading(true);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/publications`);
+      const data = await res.json();
+      setPublications(Array.isArray(data) ? data : []);
+    } catch {
+      setPublications([]);
+    } finally {
+      setPubLoading(false);
+    }
+  };
 
   const fetchAnalytics = async () => {
     if (!token) return;
@@ -73,7 +111,10 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (token) fetchAnalytics();
+    if (token) {
+      fetchAnalytics();
+      fetchPublications();
+    }
   }, [token]);
 
   const handleLogin = async (e) => {
@@ -109,6 +150,8 @@ const Dashboard = () => {
     setToken(null);
     setEditingPost(null);
     setShowForm(false);
+    setEditingPub(null);
+    setShowPubForm(false);
   };
 
   const authFetch = (url, options = {}) => {
@@ -181,6 +224,91 @@ const Dashboard = () => {
     try {
       await authFetch(`${BACKEND_URL}/api/blog/${id}`, { method: 'DELETE' });
       fetchPosts();
+    } catch (err) {
+      if (err.message?.includes('401')) handleLogout();
+    }
+  };
+
+  const openNewPubForm = () => {
+    setPubFormData({
+      title: '',
+      authors: '',
+      journal: '',
+      year: new Date().getFullYear(),
+      status: 'Published',
+      highlights: '',
+      abstract: '',
+      link: ''
+    });
+    setEditingPub(null);
+    setShowPubForm(true);
+  };
+
+  const openEditPubForm = (pub) => {
+    setPubFormData({
+      title: pub.title || '',
+      authors: pub.authors || '',
+      journal: pub.journal || '',
+      year: pub.year || new Date().getFullYear(),
+      status: pub.status || 'Published',
+      highlights: Array.isArray(pub.highlights) ? pub.highlights.join('\n') : '',
+      abstract: pub.abstract || '',
+      link: pub.link || ''
+    });
+    setEditingPub(pub);
+    setShowPubForm(true);
+  };
+
+  const closePubForm = () => {
+    setShowPubForm(false);
+    setEditingPub(null);
+  };
+
+  const handlePubSubmit = async (e) => {
+    e?.preventDefault?.();
+    setPubSaving(true);
+    try {
+      const highlights = (pubFormData.highlights || '')
+        .split('\n')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const payload = {
+        title: pubFormData.title,
+        authors: pubFormData.authors,
+        journal: pubFormData.journal,
+        year: Number(pubFormData.year) || new Date().getFullYear(),
+        status: pubFormData.status || 'Published',
+        highlights,
+        abstract: pubFormData.abstract,
+        link: pubFormData.link || ''
+      };
+      if (editingPub) {
+        await authFetch(`${BACKEND_URL}/api/publications/${editingPub.id}`, {
+          method: 'PUT',
+          body: JSON.stringify(payload)
+        });
+      } else {
+        await authFetch(`${BACKEND_URL}/api/publications`, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+      }
+      fetchPublications();
+      closePubForm();
+    } catch (err) {
+      if (err.message?.includes('401') || err.message?.includes('Invalid token')) {
+        handleLogout();
+      }
+    } finally {
+      setPubSaving(false);
+    }
+  };
+
+  const handlePubDelete = async (id) => {
+    if (!window.confirm('Delete this publication?')) return;
+    try {
+      await authFetch(`${BACKEND_URL}/api/publications/${id}`, { method: 'DELETE' });
+      fetchPublications();
     } catch (err) {
       if (err.message?.includes('401')) handleLogout();
     }
@@ -335,7 +463,10 @@ const Dashboard = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-secondary-700 mb-2">By country</h3>
+                <h3 className="text-sm font-medium text-secondary-700 mb-2 flex items-center space-x-1">
+                  <Globe className="w-4 h-4" />
+                  By country
+                </h3>
                 {!analytics.byCountry?.length ? (
                   <p className="text-secondary-500 text-sm py-2">No data yet. Visits will appear here.</p>
                 ) : (
@@ -359,6 +490,184 @@ const Dashboard = () => {
                   </div>
                 )}
               </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-sm font-medium text-secondary-700 mb-2 flex items-center space-x-1">
+                    <Calendar className="w-4 h-4" />
+                    Per week
+                  </h3>
+                  {!analytics.byWeek?.length ? (
+                    <p className="text-secondary-500 text-sm py-2">No weekly data yet.</p>
+                  ) : (
+                    <div className="max-h-48 overflow-y-auto rounded-lg border border-secondary-200">
+                      <table className="w-full text-sm">
+                        <thead className="bg-secondary-50 sticky top-0">
+                          <tr>
+                            <th className="text-left py-2 px-3 font-medium text-secondary-700">Week</th>
+                            <th className="text-right py-2 px-3 font-medium text-secondary-700">Visits</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analytics.byWeek.map(({ week, label, count }) => (
+                            <tr key={week} className="border-t border-secondary-100 hover:bg-secondary-50">
+                              <td className="py-2 px-3">{label}</td>
+                              <td className="py-2 px-3 text-right font-medium">{count}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-secondary-700 mb-2 flex items-center space-x-1">
+                    <TrendingUp className="w-4 h-4" />
+                    Per month
+                  </h3>
+                  {!analytics.byMonth?.length ? (
+                    <p className="text-secondary-500 text-sm py-2">No monthly data yet.</p>
+                  ) : (
+                    <div className="max-h-48 overflow-y-auto rounded-lg border border-secondary-200">
+                      <table className="w-full text-sm">
+                        <thead className="bg-secondary-50 sticky top-0">
+                          <tr>
+                            <th className="text-left py-2 px-3 font-medium text-secondary-700">Month</th>
+                            <th className="text-right py-2 px-3 font-medium text-secondary-700">Visits</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analytics.byMonth.map(({ month, label, count }) => (
+                            <tr key={month} className="border-t border-secondary-100 hover:bg-secondary-50">
+                              <td className="py-2 px-3">{label}</td>
+                              <td className="py-2 px-3 text-right font-medium">{count}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {analytics.byCountryByMonth?.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-secondary-700 mb-2 flex items-center space-x-1">
+                    <Globe className="w-4 h-4" />
+                    <TrendingUp className="w-4 h-4" />
+                    Country visibility over time
+                  </h3>
+                  <div className="overflow-x-auto rounded-lg border border-secondary-200">
+                    <table className="w-full text-sm min-w-[400px]">
+                      <thead className="bg-secondary-50">
+                        <tr>
+                          <th className="text-left py-2 px-3 font-medium text-secondary-700">Country</th>
+                          {analytics.byCountryByMonth.map(({ month, label }) => (
+                            <th key={month} className="text-right py-2 px-3 font-medium text-secondary-700">{label}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(() => {
+                          const countrySet = new Set();
+                          analytics.byCountryByMonth.forEach(({ byCountry }) =>
+                            byCountry.forEach(({ country }) => countrySet.add(country))
+                          );
+                          const countries = [...countrySet];
+                          return countries.map((country) => (
+                            <tr key={country} className="border-t border-secondary-100 hover:bg-secondary-50">
+                              <td className="py-2 px-3">{country}</td>
+                              {analytics.byCountryByMonth.map(({ month, byCountry }) => {
+                                const row = byCountry.find((r) => r.country === country);
+                                return (
+                                  <td key={month} className="py-2 px-3 text-right font-medium">
+                                    {row ? row.count : '–'}
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          ));
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </motion.div>
+
+        {/* Publications */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="card mb-6"
+        >
+          <h2 className="text-lg font-semibold text-secondary-800 mb-4 flex items-center justify-between">
+            <span className="flex items-center space-x-2">
+              <BookOpen className="w-5 h-5 text-primary-600" />
+              <span>Publications ({publications.length})</span>
+            </span>
+            <div className="flex items-center gap-2">
+              <Link
+                to="/publications"
+                className="text-sm text-primary-600 hover:text-primary-700"
+              >
+                View Page
+              </Link>
+              <button
+                onClick={openNewPubForm}
+                className="btn-primary inline-flex items-center space-x-1 text-sm py-1.5 px-3"
+              >
+                <Plus className="w-4 h-4" />
+                <span>New Publication</span>
+              </button>
+            </div>
+          </h2>
+          {pubLoading ? (
+            <div className="py-8 text-center text-secondary-500">Loading...</div>
+          ) : publications.length === 0 ? (
+            <div className="py-8 text-center text-secondary-500">
+              <BookOpen className="w-12 h-12 mx-auto mb-3 text-secondary-300" />
+              <p>No publications yet. Click &quot;New Publication&quot; to add one.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {publications
+                .sort((a, b) => (b.year || 0) - (a.year || 0))
+                .map((pub) => (
+                  <div
+                    key={pub.id}
+                    className="flex items-center justify-between p-4 bg-secondary-50 rounded-lg hover:bg-secondary-100 transition-colors"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-medium text-secondary-800 truncate">
+                        {pub.title}
+                      </h3>
+                      <p className="text-sm text-secondary-500">
+                        {pub.journal} • {pub.year}
+                        {pub.status === 'Under Review' && ' • Under Review'}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2 ml-4">
+                      <button
+                        onClick={() => openEditPubForm(pub)}
+                        className="p-2 text-secondary-600 hover:text-primary-600 transition-colors"
+                        title="Edit"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handlePubDelete(pub.id)}
+                        className="p-2 text-secondary-600 hover:text-red-600 transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
             </div>
           )}
         </motion.div>
@@ -526,6 +835,138 @@ const Dashboard = () => {
                     className="btn-primary px-6 py-2 disabled:opacity-50"
                   >
                     {saving ? 'Saving...' : editingPost ? 'Update' : 'Publish'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Publication Create/Edit modal */}
+        {showPubForm && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-secondary-200">
+                <h3 className="text-xl font-semibold text-secondary-800">
+                  {editingPub ? 'Edit Publication' : 'New Publication'}
+                </h3>
+                <button
+                  onClick={closePubForm}
+                  className="p-2 text-secondary-500 hover:text-secondary-700"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form onSubmit={handlePubSubmit} className="flex flex-col flex-1 overflow-hidden">
+                <div className="p-6 overflow-y-auto space-y-4 flex-1 min-h-0">
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-1">Title *</label>
+                    <input
+                      type="text"
+                      value={pubFormData.title}
+                      onChange={(e) => setPubFormData((p) => ({ ...p, title: e.target.value }))}
+                      className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      required
+                      placeholder="Publication title"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-1">Authors *</label>
+                    <input
+                      type="text"
+                      value={pubFormData.authors}
+                      onChange={(e) => setPubFormData((p) => ({ ...p, authors: e.target.value }))}
+                      className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      required
+                      placeholder="Author1, Author2, ..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-1">Journal / Venue *</label>
+                    <input
+                      type="text"
+                      value={pubFormData.journal}
+                      onChange={(e) => setPubFormData((p) => ({ ...p, journal: e.target.value }))}
+                      className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      required
+                      placeholder="e.g. NASSJ, arXiv, Under Review"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-secondary-700 mb-1">Year *</label>
+                      <input
+                        type="number"
+                        min="2000"
+                        max="2030"
+                        value={pubFormData.year}
+                        onChange={(e) => setPubFormData((p) => ({ ...p, year: parseInt(e.target.value, 10) || '' }))}
+                        className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                        required
+                        placeholder="2025"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-secondary-700 mb-1">Status</label>
+                      <select
+                        value={pubFormData.status}
+                        onChange={(e) => setPubFormData((p) => ({ ...p, status: e.target.value }))}
+                        className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="Published">Published</option>
+                        <option value="Under Review">Under Review</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-1">Highlights (one per line, 3 recommended)</label>
+                    <textarea
+                      value={pubFormData.highlights}
+                      onChange={(e) => setPubFormData((p) => ({ ...p, highlights: e.target.value }))}
+                      rows={3}
+                      className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      placeholder="First highlight&#10;Second highlight&#10;Third highlight"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-1">Abstract</label>
+                    <textarea
+                      value={pubFormData.abstract}
+                      onChange={(e) => setPubFormData((p) => ({ ...p, abstract: e.target.value }))}
+                      rows={6}
+                      className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
+                      placeholder="Full abstract..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-1">Link (optional)</label>
+                    <input
+                      type="url"
+                      value={pubFormData.link}
+                      onChange={(e) => setPubFormData((p) => ({ ...p, link: e.target.value }))}
+                      className="w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3 p-6 border-t border-secondary-200 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={closePubForm}
+                    className="px-4 py-2 border border-secondary-300 rounded-lg text-secondary-700 hover:bg-secondary-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={pubSaving}
+                    className="btn-primary px-6 py-2 disabled:opacity-50"
+                  >
+                    {pubSaving ? 'Saving...' : editingPub ? 'Update' : 'Add'}
                   </button>
                 </div>
               </form>

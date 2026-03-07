@@ -30,6 +30,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
+import Publications from './pages/Publications';
 import Dashboard from './pages/Dashboard';
 import AIAgent from './pages/AIAgent';
 
@@ -60,6 +61,16 @@ function App() {
               transition={{ duration: 0.3 }}
             >
               <About />
+            </motion.div>
+          } />
+          <Route path="/publications" element={
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Publications />
             </motion.div>
           } />
           <Route path="/blog" element={

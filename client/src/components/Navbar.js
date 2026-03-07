@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Menu, X, Brain, Home, User, FileText } from 'lucide-react';
+import { Menu, X, Brain, Home, User, FileText, BookOpen } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +19,7 @@ const Navbar = () => {
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
     { name: 'About', path: '/about', icon: User },
+    { name: 'Publications', path: '/publications', icon: BookOpen },
     { name: 'Blog', path: '/blog', icon: FileText },
     { name: 'AI Agent', path: '/ai-agent', icon: Brain },
   ];
