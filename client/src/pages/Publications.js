@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
-
-const BACKEND_URL = 'https://alemu-portfolio-backend.onrender.com';
 
 // Helper to bold author name variants
 const boldAuthor = (text) => {
