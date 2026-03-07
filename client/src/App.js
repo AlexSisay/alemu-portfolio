@@ -20,11 +20,21 @@ function TrackVisit() {
     const now = Date.now();
     if (path === lastTracked.current.path && now - lastTracked.current.time < 60000) return;
     lastTracked.current = { path, time: now };
-    fetch(`${BACKEND_URL}/api/analytics/track`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ path })
-    }).catch(() => {});
+    const sendTrack = (country, countryCode) => {
+      fetch(`${BACKEND_URL}/api/analytics/track`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path, country: country || undefined, countryCode: countryCode || undefined }),
+        cache: 'no-store'
+      }).catch(() => {});
+    };
+    fetch('https://ipapi.co/json/', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((geo) => {
+        if (geo?.country_name) sendTrack(geo.country_name, geo.country_code || '');
+        else sendTrack();
+      })
+      .catch(() => sendTrack());
   }, [location.pathname]);
   return null;
 }

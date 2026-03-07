@@ -201,9 +201,10 @@ const Publications = () => {
   useEffect(() => {
     const fetchPubs = async () => {
       try {
-        const res = await fetch(`${BACKEND_URL}/api/publications`);
+        const res = await fetch(`${BACKEND_URL}/api/publications`, { cache: 'no-store' });
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
+        // Always use API data when fetch succeeds (source of truth from Dashboard)
+        if (res.ok && Array.isArray(data)) {
           setItems(data.map((p) => ({ ...p, id: p.id || p._id })));
         }
       } catch {
