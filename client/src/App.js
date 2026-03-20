@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
@@ -10,32 +10,41 @@ import BlogPost from './pages/BlogPost';
 import Publications from './pages/Publications';
 import Dashboard from './pages/Dashboard';
 import AIAgent from './pages/AIAgent';
-import { BACKEND_URL } from './config';
 
 function TrackVisit() {
   const location = useLocation();
-  const lastTracked = useRef({ path: '', time: 0 });
+
+  // Google Analytics 4 (free tier) for SPA page tracking.
   useEffect(() => {
-    const path = location.pathname || '/';
-    const now = Date.now();
-    if (path === lastTracked.current.path && now - lastTracked.current.time < 60000) return;
-    lastTracked.current = { path, time: now };
-    const sendTrack = (country, countryCode) => {
-      fetch(`${BACKEND_URL}/api/analytics/track`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path, country: country || undefined, countryCode: countryCode || undefined }),
-        cache: 'no-store'
-      }).catch(() => {});
-    };
-    fetch('https://ipapi.co/json/', { cache: 'no-store' })
-      .then((r) => r.json())
-      .then((geo) => {
-        if (geo?.country_name) sendTrack(geo.country_name, geo.country_code || '');
-        else sendTrack();
-      })
-      .catch(() => sendTrack());
+    const measurementId = process.env.REACT_APP_GA_MEASUREMENT_ID;
+    if (!measurementId) return;
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      window.dataLayer.push(arguments);
+    }
+    window.gtag = window.gtag || gtag;
+
+    const existingScript = document.querySelector('script[data-analytics-provider="ga4"]');
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.defer = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+      script.setAttribute('data-analytics-provider', 'ga4');
+      document.head.appendChild(script);
+
+      window.gtag('js', new Date());
+      // Disable automatic first pageview so SPA route tracking is consistent.
+      window.gtag('config', measurementId, { send_page_view: false });
+    }
+
+    window.gtag('event', 'page_view', {
+      page_path: location.pathname,
+      page_location: window.location.href,
+      page_title: document.title
+    });
   }, [location.pathname]);
+
   return null;
 }
 

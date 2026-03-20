@@ -11,10 +11,6 @@ import {
   LogOut,
   X,
   Globe,
-  Users,
-  Eye,
-  Calendar,
-  TrendingUp,
   BookOpen
 } from 'lucide-react';
 import { BACKEND_URL } from '../config';
@@ -36,15 +32,6 @@ const Dashboard = () => {
     tags: ''
   });
   const [saving, setSaving] = useState(false);
-  const [analytics, setAnalytics] = useState({
-    total: 0,
-    uniqueVisitors: 0,
-    byCountry: [],
-    byWeek: [],
-    byMonth: [],
-    byCountryByMonth: []
-  });
-  const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [publications, setPublications] = useState([]);
   const [pubLoading, setPubLoading] = useState(true);
   const [showPubForm, setShowPubForm] = useState(false);
@@ -64,6 +51,8 @@ const Dashboard = () => {
 
   const BACKEND_UNREACHABLE_MSG = 'Could not reach backend. If using Render free tier, wait 30–60 seconds and refresh.';
   const wakeBackendUrl = `${BACKEND_URL}/api/health`;
+  const gaMeasurementId = process.env.REACT_APP_GA_MEASUREMENT_ID;
+  const gaDashboardUrl = 'https://analytics.google.com/';
 
   const fetchPublications = async () => {
     setPubLoading(true);
@@ -80,20 +69,6 @@ const Dashboard = () => {
       setPubError(BACKEND_UNREACHABLE_MSG);
     } finally {
       setPubLoading(false);
-    }
-  };
-
-  const fetchAnalytics = async () => {
-    if (!token) return;
-    setAnalyticsLoading(true);
-    try {
-      const res = await authFetch(`${BACKEND_URL}/api/analytics/stats`);
-      const data = await res.json();
-      if (res.ok) setAnalytics(data);
-    } catch {
-      /* ignore */
-    } finally {
-      setAnalyticsLoading(false);
     }
   };
 
@@ -120,7 +95,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (token) {
-      fetchAnalytics();
       fetchPublications();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -451,168 +425,26 @@ const Dashboard = () => {
         >
           <h2 className="text-lg font-semibold text-secondary-800 mb-4 flex items-center space-x-2">
             <Globe className="w-5 h-5 text-primary-600" />
-            <span>Visit Stats</span>
-            <button
-              onClick={fetchAnalytics}
-              disabled={analyticsLoading}
-              className="ml-auto text-sm text-primary-600 hover:text-primary-700 disabled:opacity-50"
-            >
-              Refresh
-            </button>
+            <span>Visit Stats (Google Analytics)</span>
           </h2>
-          {analyticsLoading ? (
-            <div className="py-8 text-center text-secondary-500">Loading...</div>
-          ) : (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <div className="p-4 bg-secondary-50 rounded-lg">
-                  <div className="flex items-center space-x-2 text-secondary-600 mb-1">
-                    <Eye className="w-4 h-4" />
-                    <span className="text-sm">Total visits</span>
-                  </div>
-                  <div className="text-2xl font-bold text-primary-600">{analytics.total ?? 0}</div>
-                </div>
-                <div className="p-4 bg-secondary-50 rounded-lg">
-                  <div className="flex items-center space-x-2 text-secondary-600 mb-1">
-                    <Users className="w-4 h-4" />
-                    <span className="text-sm">Unique visitors</span>
-                  </div>
-                  <div className="text-2xl font-bold text-primary-600">{analytics.uniqueVisitors ?? 0}</div>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-secondary-700 mb-2 flex items-center space-x-1">
-                  <Globe className="w-4 h-4" />
-                  By country
-                </h3>
-                {!analytics.byCountry?.length ? (
-                  <p className="text-secondary-500 text-sm py-2">No data yet. Visits will appear here.</p>
-                ) : (
-                  <div className="max-h-48 overflow-y-auto rounded-lg border border-secondary-200">
-                    <table className="w-full text-sm">
-                      <thead className="bg-secondary-50 sticky top-0">
-                        <tr>
-                          <th className="text-left py-2 px-3 font-medium text-secondary-700">Country</th>
-                          <th className="text-right py-2 px-3 font-medium text-secondary-700">Visits</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {analytics.byCountry.map(({ country, count }) => (
-                          <tr key={country} className="border-t border-secondary-100 hover:bg-secondary-50">
-                            <td className="py-2 px-3">{country}</td>
-                            <td className="py-2 px-3 text-right font-medium">{count}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-sm font-medium text-secondary-700 mb-2 flex items-center space-x-1">
-                    <Calendar className="w-4 h-4" />
-                    Per week
-                  </h3>
-                  {!analytics.byWeek?.length ? (
-                    <p className="text-secondary-500 text-sm py-2">No weekly data yet.</p>
-                  ) : (
-                    <div className="max-h-48 overflow-y-auto rounded-lg border border-secondary-200">
-                      <table className="w-full text-sm">
-                        <thead className="bg-secondary-50 sticky top-0">
-                          <tr>
-                            <th className="text-left py-2 px-3 font-medium text-secondary-700">Week</th>
-                            <th className="text-right py-2 px-3 font-medium text-secondary-700">Visits</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {analytics.byWeek.map(({ week, label, count }) => (
-                            <tr key={week} className="border-t border-secondary-100 hover:bg-secondary-50">
-                              <td className="py-2 px-3">{label}</td>
-                              <td className="py-2 px-3 text-right font-medium">{count}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-secondary-700 mb-2 flex items-center space-x-1">
-                    <TrendingUp className="w-4 h-4" />
-                    Per month
-                  </h3>
-                  {!analytics.byMonth?.length ? (
-                    <p className="text-secondary-500 text-sm py-2">No monthly data yet.</p>
-                  ) : (
-                    <div className="max-h-48 overflow-y-auto rounded-lg border border-secondary-200">
-                      <table className="w-full text-sm">
-                        <thead className="bg-secondary-50 sticky top-0">
-                          <tr>
-                            <th className="text-left py-2 px-3 font-medium text-secondary-700">Month</th>
-                            <th className="text-right py-2 px-3 font-medium text-secondary-700">Visits</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {analytics.byMonth.map(({ month, label, count }) => (
-                            <tr key={month} className="border-t border-secondary-100 hover:bg-secondary-50">
-                              <td className="py-2 px-3">{label}</td>
-                              <td className="py-2 px-3 text-right font-medium">{count}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {analytics.byCountryByMonth?.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-medium text-secondary-700 mb-2 flex items-center space-x-1">
-                    <Globe className="w-4 h-4" />
-                    <TrendingUp className="w-4 h-4" />
-                    Country visibility over time
-                  </h3>
-                  <div className="overflow-x-auto rounded-lg border border-secondary-200">
-                    <table className="w-full text-sm min-w-[400px]">
-                      <thead className="bg-secondary-50">
-                        <tr>
-                          <th className="text-left py-2 px-3 font-medium text-secondary-700">Country</th>
-                          {analytics.byCountryByMonth.map(({ month, label }) => (
-                            <th key={month} className="text-right py-2 px-3 font-medium text-secondary-700">{label}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(() => {
-                          const countrySet = new Set();
-                          analytics.byCountryByMonth.forEach(({ byCountry }) =>
-                            byCountry.forEach(({ country }) => countrySet.add(country))
-                          );
-                          const countries = [...countrySet];
-                          return countries.map((country) => (
-                            <tr key={country} className="border-t border-secondary-100 hover:bg-secondary-50">
-                              <td className="py-2 px-3">{country}</td>
-                              {analytics.byCountryByMonth.map(({ month, byCountry }) => {
-                                const row = byCountry.find((r) => r.country === country);
-                                return (
-                                  <td key={month} className="py-2 px-3 text-right font-medium">
-                                    {row ? row.count : '–'}
-                                  </td>
-                                );
-                              })}
-                            </tr>
-                          ));
-                        })()}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          <div className="rounded-lg border border-secondary-200 bg-secondary-50 p-4">
+            <p className="text-secondary-700">
+              Website analytics now run on Google Analytics (free tier) instead of the internal visit tracker.
+            </p>
+            <p className="text-secondary-600 mt-2 text-sm">
+              {gaMeasurementId
+                ? `GA4 is configured with measurement ID ${gaMeasurementId}. Open Google Analytics to see visits, pages, and acquisition reports.`
+                : 'Set REACT_APP_GA_MEASUREMENT_ID in your frontend environment to connect analytics.'}
+            </p>
+            <a
+              href={gaDashboardUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex mt-3 text-primary-600 hover:text-primary-700 font-medium text-sm"
+            >
+              Open Google Analytics
+            </a>
+          </div>
         </motion.div>
 
         {/* Publications */}

@@ -103,7 +103,7 @@ const About = () => {
 
                 <div className="mt-6">
                   <a
-                    href="/Alemu_Sisay_Nigru_CV_Jan2026.pdf"
+                    href="/CV_03_26.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-primary w-full flex items-center justify-center space-x-2"

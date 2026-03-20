@@ -88,7 +88,7 @@ const Home = () => {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
                 <a
-                  href="/Alemu_Sisay_Nigru_CV_Jan2026.pdf"
+                  href="/CV_03_26.pdf"
                   download
                   className="inline-flex items-center px-6 py-3 border border-secondary-300 text-secondary-700 rounded-lg hover:bg-secondary-50 transition-colors font-medium"
                 >
