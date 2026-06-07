@@ -78,8 +78,8 @@ const Home = () => {
               
               <p className="text-xl text-secondary-600 mb-8 leading-relaxed">
                 Passionate AI researcher specializing in machine learning, computer vision, 
-                and healthcare applications. Currently pursuing my academic journey while 
-                contributing to cutting-edge research projects.
+                and healthcare applications. PhD graduate in AI in Medicine, contributing 
+                to cutting-edge research projects.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">

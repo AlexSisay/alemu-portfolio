@@ -11,9 +11,12 @@ import {
   LogOut,
   X,
   Globe,
-  BookOpen
+  BookOpen,
+  User
 } from 'lucide-react';
 import { BACKEND_URL } from '../config';
+import { usePageMeta } from '../hooks/usePageMeta';
+import DashboardProfileTab from '../components/dashboard/DashboardProfileTab';
 const TOKEN_KEY = 'dashboard_token';
 
 const Dashboard = () => {
@@ -48,6 +51,9 @@ const Dashboard = () => {
   });
   const [pubSaving, setPubSaving] = useState(false);
   const [pubError, setPubError] = useState('');
+  const [activeTab, setActiveTab] = useState('profile');
+
+  usePageMeta({ title: 'Admin Dashboard', noindex: true });
 
   const BACKEND_UNREACHABLE_MSG = 'Could not reach backend. If using Render free tier, wait 30–60 seconds and refresh.';
   const wakeBackendUrl = `${BACKEND_URL}/api/health`;
@@ -388,8 +394,8 @@ const Dashboard = () => {
               <BarChart3 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold gradient-text">Blog Manager</h1>
-              <p className="text-secondary-600 text-sm">Post news and updates</p>
+              <h1 className="text-2xl font-bold gradient-text">Site CMS</h1>
+              <p className="text-secondary-600 text-sm">Manage profile, blog, and publications</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
@@ -416,7 +422,32 @@ const Dashboard = () => {
           </div>
         </motion.div>
 
-        {/* Analytics */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {[
+            { id: 'profile', label: 'Profile', icon: User },
+            { id: 'analytics', label: 'Analytics', icon: Globe },
+            { id: 'publications', label: 'Publications', icon: BookOpen },
+            { id: 'blog', label: 'Blog', icon: FileText }
+          ].map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setActiveTab(id)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                activeTab === id
+                  ? 'bg-primary-600 text-white border-primary-600'
+                  : 'bg-white text-secondary-700 border-secondary-300 hover:bg-secondary-50'
+              }`}
+            >
+              <Icon className="w-4 h-4" aria-hidden="true" />
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'profile' && <DashboardProfileTab token={token} authFetch={authFetch} />}
+
+        {activeTab === 'analytics' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -446,8 +477,9 @@ const Dashboard = () => {
             </a>
           </div>
         </motion.div>
+        )}
 
-        {/* Publications */}
+        {activeTab === 'publications' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -549,8 +581,9 @@ const Dashboard = () => {
             </div>
           )}
         </motion.div>
+        )}
 
-        {/* Post list */}
+        {activeTab === 'blog' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -618,6 +651,7 @@ const Dashboard = () => {
             </div>
           )}
         </motion.div>
+        )}
 
         {/* Create/Edit modal */}
         {showForm && (

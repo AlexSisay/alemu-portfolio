@@ -10,6 +10,8 @@ import BlogPost from './pages/BlogPost';
 import Publications from './pages/Publications';
 import Dashboard from './pages/Dashboard';
 import AIAgent from './pages/AIAgent';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 
 function TrackVisit() {
   const location = useLocation();
@@ -115,6 +117,16 @@ function App() {
               transition={{ duration: 0.3 }}
             >
               <Dashboard />
+            </motion.div>
+          } />
+          <Route path="/privacy" element={
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+              <Privacy />
+            </motion.div>
+          } />
+          <Route path="/terms" element={
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+              <Terms />
             </motion.div>
           } />
           <Route path="/ai-agent" element={

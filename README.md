@@ -1,49 +1,75 @@
-# Alemu Portfolio Backend
+# Alemu Sisay Nigru — Personal Portfolio
 
-Backend server for Alemu Sisay Nigru's academic portfolio with AI integration.
+Academic portfolio site (React + Node.js) with blog, publications, AI assistant, and admin CMS.
 
-## Features
+## What is deployed (source of truth)
 
-- RESTful API endpoints for portfolio data
-- AI Agent integration (Google Gemini / OpenAI)
-- Blog posts management
-- Dashboard analytics
-- Health check endpoint
+| Layer | Path | Hosting |
+|-------|------|---------|
+| **Frontend** | `client/` | GitHub Pages → [alexsisay.github.io/alemu-portfolio](https://alexsisay.github.io/alemu-portfolio/) |
+| **Backend** | `alemu-portfolio-backend/` (git submodule) | Render |
 
-## API Endpoints
+**Legacy folders (`src/`, `server/` at repo root) are not deployed.** Edit `client/` and `alemu-portfolio-backend/` only to avoid drift.
 
-- `GET /api/health` - Health check
-- `GET /api/profile` - Portfolio data
-- `POST /api/ai-chat` - AI Agent chat
-- `GET /api/ai-status` - AI provider status
-- `GET /api/blog` - Blog posts list
-- `GET /api/blog/:id` - Individual blog post
-- `GET /api/dashboard` - Dashboard analytics
+## Local development
 
-## Environment Variables
+```bash
+# Frontend
+cd client && npm install && npm start
 
-Copy `env.example` to `.env` and configure:
+# Backend (separate terminal)
+cd alemu-portfolio-backend && npm install && npm run dev
+```
+
+Frontend proxies API calls to `http://localhost:5000` in development.
+
+## Environment variables
+
+**Frontend** (`client/.env.local`):
+
+```env
+REACT_APP_BACKEND_URL=http://localhost:5000
+REACT_APP_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+**Backend** (`alemu-portfolio-backend/.env`):
 
 ```env
 PORT=5000
-NODE_ENV=production
+MONGODB_URI=mongodb+srv://...
+JWT_SECRET=...
 AI_PROVIDER=gemini
-GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_API_KEY=...
 CORS_ORIGIN=https://alexsisay.github.io
 ```
 
-## Deployment on Railway
+GitHub Actions uses repository variable `REACT_APP_GA_MEASUREMENT_ID` at build time.
 
-1. Push this repository to GitHub
-2. Connect to Railway
-3. Set environment variables in Railway dashboard
-4. Deploy automatically
+## CMS site profile
 
-## Local Development
+Editable from Dashboard → Profile tab. Data is stored in MongoDB via `/api/site-profile`.
+
+Seed or refresh defaults (e.g. after graduation copy updates):
 
 ```bash
-npm install
-npm run dev
+cd alemu-portfolio-backend
+MONGODB_URI="..." npm run seed:profile
 ```
 
-Server will run on http://localhost:5000 
+## SEO build step
+
+Production build runs `client/scripts/generate-seo.js` after CRA build to:
+
+- Regenerate `sitemap.xml` (static routes + blog posts from API)
+- Write crawler-friendly HTML shells under `build/blog/:id/`
+
+## Deploy
+
+- **Frontend:** push to `main` → GitHub Actions (`.github/workflows/deploy.yml`)
+- **Backend:** push `alemu-portfolio-backend` submodule → Render auto-deploy
+
+After backend deploy, run `npm run seed:profile` on Render (or locally) if MongoDB still has stale profile text.
+
+## API overview
+
+See `alemu-portfolio-backend/README.md` for full endpoint list (`/api/profile`, `/api/blog`, `/api/site-profile`, `/api/ai-chat`, etc.).

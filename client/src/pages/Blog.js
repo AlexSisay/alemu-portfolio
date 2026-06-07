@@ -4,8 +4,14 @@ import { motion } from 'framer-motion';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 
 import { BACKEND_URL } from '../config';
+import { usePageMeta } from '../hooks/usePageMeta';
+import PageShell from '../components/PageShell';
 
 const Blog = () => {
+  usePageMeta({
+    title: 'Blog',
+    description: 'Research notes and articles on medical imaging AI, spine MRI, multimodal learning, and clinical decision support.'
+  });
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,7 +56,7 @@ const Blog = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 pt-20">
+    <PageShell className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 pt-20">
       <div className="container-max section-padding">
         {/* Header */}
         <motion.div
@@ -121,7 +127,7 @@ const Blog = () => {
           </motion.div>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 };
 

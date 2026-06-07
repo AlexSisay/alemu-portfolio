@@ -3,8 +3,15 @@ import { motion } from 'framer-motion';
 import { Send, Brain, User, Bot, Loader2, Sparkles, Info } from 'lucide-react';
 
 import { BACKEND_URL } from '../config';
+import { usePageMeta } from '../hooks/usePageMeta';
+import PageShell from '../components/PageShell';
 
 const AIAgent = () => {
+  usePageMeta({
+    title: 'AI Assistant',
+    description: 'Chat with an AI assistant about Alemu Sisay Nigru’s research, publications, skills, and background.',
+    noindex: true
+  });
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -119,7 +126,7 @@ const AIAgent = () => {
   const providerInfo = getProviderInfo();
 
   return (
-    <div className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
+    <PageShell className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       <div className="container-max section-padding">
         {/* Header */}
         <motion.div
@@ -336,7 +343,7 @@ const AIAgent = () => {
           </motion.div>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 };
 

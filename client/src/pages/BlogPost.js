@@ -12,12 +12,51 @@ import {
 } from 'lucide-react';
 
 import { BACKEND_URL } from '../config';
+import { usePageMeta } from '../hooks/usePageMeta';
+import PageShell from '../components/PageShell';
 
 const BlogPost = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  usePageMeta({
+    title: post?.title || 'Blog Post',
+    description: post?.excerpt || post?.content?.slice(0, 160) || 'Research blog post',
+    type: 'article'
+  });
+
+  useEffect(() => {
+    if (!post) return undefined;
+
+    const scriptId = 'blog-article-jsonld';
+    let script = document.getElementById(scriptId);
+    if (!script) {
+      script = document.createElement('script');
+      script.id = scriptId;
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.excerpt || post.content?.slice(0, 160),
+      datePublished: post.date,
+      author: {
+        '@type': 'Person',
+        name: 'Alemu Sisay Nigru',
+        url: 'https://alexsisay.github.io/alemu-portfolio/'
+      },
+      mainEntityOfPage: `https://alexsisay.github.io/alemu-portfolio/blog/${id}`
+    });
+
+    return () => {
+      script?.remove();
+    };
+  }, [post, id]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -77,7 +116,7 @@ const BlogPost = () => {
   };
 
   return (
-    <div className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
+    <PageShell className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       <div className="container-max section-padding">
         {/* Back Button */}
         <motion.div
@@ -237,7 +276,7 @@ const BlogPost = () => {
           </div>
         </motion.div>
       </div>
-    </div>
+    </PageShell>
   );
 };
 

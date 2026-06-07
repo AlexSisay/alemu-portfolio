@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Brain, Mail, Linkedin, Github, Twitter } from 'lucide-react';
+import { Brain } from 'lucide-react';
+import SocialLinks from './SocialLinks';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -18,42 +19,11 @@ const Footer = () => {
               <span className="text-xl font-bold">Alemu Sisay Nigru</span>
             </div>
             <p className="text-secondary-300 mb-4 max-w-md">
-              AI Research Scientist and PhD candidate in AI in Medicine. 
+              AI Research Scientist with a PhD in AI in Medicine. 
               Specialized in spine MRI analysis, multimodal data integration, 
               and risk prediction for clinical decision support.
             </p>
-            <div className="flex space-x-4">
-              <a
-                href="mailto:alemu.nigru@unibs.it"
-                className="text-secondary-300 hover:text-primary-400 transition-colors"
-              >
-                <Mail className="w-5 h-5" />
-              </a>
-              <a
-                href="https://linkedin.com/in/alemu-sisay-nigru-23612514b"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-secondary-300 hover:text-primary-400 transition-colors"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a
-                href="https://github.com/alexsisay"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-secondary-300 hover:text-primary-400 transition-colors"
-              >
-                <Github className="w-5 h-5" />
-              </a>
-              <a
-                href="https://twitter.com/alemu_sisay"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-secondary-300 hover:text-primary-400 transition-colors"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-            </div>
+            <SocialLinks className="flex space-x-4 text-secondary-300" />
           </div>
 
           {/* Quick Links */}
@@ -71,13 +41,13 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/blog" className="text-secondary-300 hover:text-primary-400 transition-colors">
-                  Blog
+                <Link to="/publications" className="text-secondary-300 hover:text-primary-400 transition-colors">
+                  Publications
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard" className="text-secondary-300 hover:text-primary-400 transition-colors">
-                  Dashboard
+                <Link to="/blog" className="text-secondary-300 hover:text-primary-400 transition-colors">
+                  Blog
                 </Link>
               </li>
               <li>

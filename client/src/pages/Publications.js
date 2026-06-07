@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import { BACKEND_URL } from '../config';
+import { usePageMeta } from '../hooks/usePageMeta';
+import PageShell from '../components/PageShell';
 
 // Parse abstract into styled sections (Background, Methods, Results, etc.)
 const parseAbstractSections = (text) => {
@@ -113,11 +115,13 @@ const PublicationCard = ({ pub, index }) => {
   const authorsFormatted = boldAuthor(pub.authors);
 
   return (
-    <motion.div
+    <motion.article
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
       className="card"
+      itemScope
+      itemType="https://schema.org/ScholarlyArticle"
     >
       <div className="flex items-start justify-between gap-4 mb-2">
         <span className="text-sm font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded">
@@ -125,7 +129,7 @@ const PublicationCard = ({ pub, index }) => {
           {pub.status === 'Under Review' && ' • Under Review'}
         </span>
       </div>
-      <h4 className="text-lg font-semibold text-secondary-800 mb-2">{pub.title}</h4>
+      <h3 className="text-lg font-semibold text-secondary-800 mb-2">{pub.title}</h3>
       <p
         className="text-secondary-600 text-sm mb-3"
         dangerouslySetInnerHTML={{ __html: authorsFormatted }}
@@ -190,11 +194,16 @@ const PublicationCard = ({ pub, index }) => {
           </div>
         </div>
       )}
-    </motion.div>
+    </motion.article>
   );
 };
 
 const Publications = () => {
+  usePageMeta({
+    title: 'Publications',
+    description: 'Peer-reviewed and preprint research in medical imaging AI, spine MRI analysis, multimodal AI, and clinical decision support.'
+  });
+
   const [items, setItems] = useState(publications);
   const [loading, setLoading] = useState(true);
   const [usedFallback, setUsedFallback] = useState(false);
@@ -260,7 +269,7 @@ const Publications = () => {
     .sort((a, b) => b - a);
 
   return (
-    <div className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
+    <PageShell className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       <section className="section-padding">
         <div className="container-max">
           <motion.div
@@ -324,7 +333,7 @@ const Publications = () => {
           </div>
         </div>
       </section>
-    </div>
+    </PageShell>
   );
 };
 

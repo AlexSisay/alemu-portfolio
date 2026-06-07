@@ -17,33 +17,40 @@ import {
 import axios from 'axios';
 
 import { BACKEND_URL } from '../config';
-
+import { useSiteProfile } from '../hooks/useSiteProfile';
+import { usePageMeta } from '../hooks/usePageMeta';
+import PageShell from '../components/PageShell';
+import ProfileImage from '../components/ProfileImage';
+import { resolveAssetUrl } from '../utils/assets';
+import { DEFAULT_SITE_PROFILE } from '../constants/defaultSiteProfile';
 
 const About = () => {
   const [profile, setProfile] = useState(null);
+  const { profile: site, loading: siteLoading } = useSiteProfile();
+
+  usePageMeta({
+    title: 'About',
+    description: site.aboutText || site.seoDescription,
+    image: resolveAssetUrl(site.ogImageUrl, DEFAULT_SITE_PROFILE.ogImageUrl)
+  });
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_URL}/api/profile`);
-        setProfile(response.data);
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      }
-    };
-    fetchProfile();
+    axios.get(`${BACKEND_URL}/api/profile`).then((r) => setProfile(r.data)).catch(() => {});
   }, []);
 
-  if (!profile) {
+  const aboutImg = resolveAssetUrl(site.aboutImageUrl, DEFAULT_SITE_PROFILE.aboutImageUrl);
+  const cvHref = resolveAssetUrl(site.cvFileUrl, DEFAULT_SITE_PROFILE.cvFileUrl);
+
+  if (siteLoading || !profile) {
     return (
-      <div className="pt-16 min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-      </div>
+      <PageShell className="pt-16 min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600" aria-label="Loading" />
+      </PageShell>
     );
   }
 
   return (
-    <div className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
+    <PageShell className="pt-16 min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50">
       {/* Hero Section */}
       <section className="section-padding">
         <div className="container-max">
@@ -55,9 +62,10 @@ const About = () => {
               className="lg:col-span-1"
             >
               <div className="relative">
-                <img
-                  src="https://alexsisay.github.io/alemu-portfolio/professnal_photo_2022.jpg"
-                  alt="Alemu Sisay Nigru"
+                <ProfileImage
+                  src={aboutImg}
+                  fallbackSrc={DEFAULT_SITE_PROFILE.aboutImageUrl}
+                  alt="Alemu Sisay Nigru, professional portrait"
                   className="w-full h-96 object-cover rounded-2xl shadow-2xl"
                 />
                 <div className="absolute -inset-4 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl opacity-20 blur-xl"></div>
@@ -103,7 +111,7 @@ const About = () => {
 
                 <div className="mt-6">
                   <a
-                    href="/CV_03_26.pdf"
+                    href={cvHref}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-primary w-full flex items-center justify-center space-x-2"
@@ -127,10 +135,7 @@ const About = () => {
                 </h1>
                 <h2 className="text-2xl text-secondary-600 mb-6">{profile.personal.title}</h2>
                 <p className="text-lg text-secondary-700 leading-relaxed">
-                  I am a passionate AI researcher and academic with expertise in machine learning, 
-                  computer vision, and healthcare applications. My research focuses on developing 
-                  innovative AI solutions that address real-world challenges and contribute to 
-                  social good.
+                  {site.aboutText || DEFAULT_SITE_PROFILE.aboutText}
                 </p>
               </div>
 
@@ -252,19 +257,20 @@ const About = () => {
                         <Award className="w-6 h-6 text-secondary-600" />
                       </div>
                       <div>
-                        <h4 className="text-lg font-semibold text-secondary-800 mb-2">PhD Journey and Global Impact</h4>
+                        <h4 className="text-lg font-semibold text-secondary-800 mb-2">PhD Research and Global Impact</h4>
                         <p>
-                          In December 2022, I started my Ph.D. in Artificial Intelligence in Medicine at the University of Brescia. 
-                          My research focuses on AI-driven clinical decision support for personalized management of low back pain, 
-                          aiming to enhance diagnostic workflows for spine-related pathologies. During this journey, I have served as a 
-                          visiting Ph.D. researcher at the Center for Digital Health & Implementation Science (CDHI) in Ethiopia 
-                          (September – December 2024), and at New York University's Video Lab (April – October 2025), where I 
-                          contributed to MRI-based spinal pathology grading and developed deep learning models for lumbar spine pathology detection.
+                          In December 2022, I began my Ph.D. in Artificial Intelligence in Medicine at the University of Brescia and
+                          completed it on May 4, 2026. My doctoral research focused on AI-driven clinical decision support for
+                          personalized management of low back pain, developing methods to enhance diagnostic workflows for
+                          spine-related pathologies. During my doctorate, I served as a visiting Ph.D. researcher at the Center for
+                          Digital Health & Implementation Science (CDHI) in Ethiopia (September – December 2024), and at New York
+                          University's Video Lab (April – October 2025), where I contributed to MRI-based spinal pathology grading
+                          and developed deep learning models for lumbar spine pathology detection.
                         </p>
                         <p className="mt-3">
-                          I've also deepened my academic toolkit through elite programs such as the Oxford Machine Learning Summer School, 
-                          IEEE ComSoc eHealth TC Ph.D. School, and Ph.D. School on Statistical Methods & Data Analysis in Medical Research 
-                          at the University of Brescia, along with numerous international conferences and online seminars on medical AI and imaging.
+                          I deepened my academic toolkit through programs such as the Oxford Machine Learning Summer School,
+                          IEEE ComSoc eHealth TC Ph.D. School, and the Ph.D. School on Statistical Methods & Data Analysis in Medical
+                          Research at the University of Brescia, along with international conferences and seminars on medical AI and imaging.
                         </p>
 
                         {/* Wedding Milestone Section - now before the closing quote */}
@@ -467,8 +473,8 @@ const About = () => {
           </div>
         </div>
       </section>
-    </div>
+    </PageShell>
   );
 };
 
-export default About; 
+export default About;

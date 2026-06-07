@@ -159,11 +159,11 @@ function getFallbackResponse(question) {
   const lowerQuestion = question.toLowerCase();
   
   if (lowerQuestion.includes('research') || lowerQuestion.includes('focus')) {
-    return "Alemu's research focuses on Artificial Intelligence in Medicine, particularly in medical imaging and healthcare applications. He is currently pursuing a PhD at the University of Brescia in AI for medical applications.";
+    return "Alemu's research focuses on Artificial Intelligence in Medicine, particularly in medical imaging and healthcare applications. He earned his PhD at the University of Brescia in AI in Medicine";
   }
   
   if (lowerQuestion.includes('education') || lowerQuestion.includes('degree')) {
-    return "Alemu holds an MSc in Communication Technologies and Multimedia from the University of Brescia (2019-2022) and is currently pursuing a PhD in Artificial Intelligence in Medicine at the same university (2022-2025).";
+    return "Alemu holds a BSc in Electrical and Computer Engineering from the University of Gondar, Ethiopia (2012-2016), an MSc in Communication Technologies and Multimedia from the University of Brescia (2019-2022) and a PhD in Artificial Intelligence in Medicine from the same university (2022-2026).";
   }
   
   if (lowerQuestion.includes('skill') || lowerQuestion.includes('expertise')) {
@@ -225,7 +225,6 @@ app.get('/api/ai-status', (req, res) => {
 
 // Blog data
 const blogPosts = [
-  {
   {
     id: 1,
     title: "Machine Learning Applications in Healthcare",

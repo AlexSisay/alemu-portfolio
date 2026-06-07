@@ -40,6 +40,7 @@ jobs:
     - name: Build Frontend
       env:
         REACT_APP_GA_MEASUREMENT_ID: ${{ vars.REACT_APP_GA_MEASUREMENT_ID }}
+        REACT_APP_BACKEND_URL: https://alemu-portfolio-backend.onrender.com
       run: |
         cd client
         npm run build
