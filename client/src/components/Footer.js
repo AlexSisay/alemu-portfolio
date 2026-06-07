@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Brain } from 'lucide-react';
 import SocialLinks from './SocialLinks';
+import { RESEARCH_AREAS } from '../utils/homeStats';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -62,11 +63,9 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Research Areas</h3>
             <ul className="space-y-2">
-              <li className="text-secondary-300">Medical Imaging AI</li>
-              <li className="text-secondary-300">Healthcare AI</li>
-              <li className="text-secondary-300">Computer Vision</li>
-              <li className="text-secondary-300">Risk Prediction</li>
-              <li className="text-secondary-300">Spine MRI Analysis</li>
+              {RESEARCH_AREAS.map((area) => (
+                <li key={area} className="text-secondary-300">{area}</li>
+              ))}
             </ul>
           </div>
         </div>

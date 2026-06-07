@@ -259,8 +259,8 @@ const About = () => {
                       <div>
                         <h4 className="text-lg font-semibold text-secondary-800 mb-2">PhD Research and Global Impact</h4>
                         <p>
-                          In December 2022, I began my Ph.D. in Artificial Intelligence in Medicine at the University of Brescia and
-                          completed it on May 4, 2026. My doctoral research focused on AI-driven clinical decision support for
+                          In December 2022, I began my Ph.D. in Artificial Intelligence in Medicine at the University of Brescia.
+                          My doctoral research focused on AI-driven clinical decision support for
                           personalized management of low back pain, developing methods to enhance diagnostic workflows for
                           spine-related pathologies. During my doctorate, I served as a visiting Ph.D. researcher at the Center for
                           Digital Health & Implementation Science (CDHI) in Ethiopia (September – December 2024), and at New York
@@ -268,12 +268,13 @@ const About = () => {
                           and developed deep learning models for lumbar spine pathology detection.
                         </p>
                         <p className="mt-3">
-                          I deepened my academic toolkit through programs such as the Oxford Machine Learning Summer School,
-                          IEEE ComSoc eHealth TC Ph.D. School, and the Ph.D. School on Statistical Methods & Data Analysis in Medical
-                          Research at the University of Brescia, along with international conferences and seminars on medical AI and imaging.
+                          I further strengthened my academic and research foundation through programs such as the Oxford Machine
+                          Learning Summer School, the IEEE ComSoc eHealth Technical Committee Ph.D. School, and the University of
+                          Brescia Ph.D. School on Statistical Methods and Data Analysis in Medical Research, alongside numerous
+                          international conferences and workshops in AI and medical imaging.
                         </p>
 
-                        {/* Wedding Milestone Section - now before the closing quote */}
+                        {/* Wedding — November 2024 */}
                         <div className="flex items-start space-x-4 mt-8">
                           <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
                             <Heart className="w-6 h-6 text-red-500" />
@@ -294,6 +295,23 @@ const About = () => {
                             </div>
                           </div>
                         </div>
+
+                        <p className="mt-8">
+                          On May 4, 2026, I completed my Ph.D. with the development of an integrative AI framework for personalized
+                          spine care that
+                          combines spine MRI analysis, patient-reported outcome measures (PROMs), and clinical reasoning within a
+                          clinician-centered workflow. As part of this work, I developed LumbarAI, a multi-view transformer-based
+                          framework for automated lumbar spine pathology detection and grading; investigated psychosocial patient
+                          phenotypes through unsupervised learning; identified key coping strategies associated with pain outcomes;
+                          and designed a transparent risk stratification approach for early screening and personalized intervention.
+                        </p>
+                        <p className="mt-3">
+                          Collectively, this research established a technical foundation for integrating structural, functional, and
+                          psychosocial information into AI-assisted healthcare systems while preserving clinician oversight and
+                          explainability. More broadly, it demonstrated how trustworthy AI can support more holistic,
+                          patient-centered decision-making and help bridge the gap between medical imaging findings and patients'
+                          lived experiences.
+                        </p>
                       </div>
                     </div>
 

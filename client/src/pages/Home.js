@@ -18,19 +18,16 @@ import { usePageMeta } from '../hooks/usePageMeta';
 import PageShell, { PageSkeleton } from '../components/PageShell';
 import ProfileImage from '../components/ProfileImage';
 import SocialLinks from '../components/SocialLinks';
-import { resolveAssetUrl } from '../utils/assets';
+import { resolveAssetUrl, cvDownloadFilename } from '../utils/assets';
 import { DEFAULT_SITE_PROFILE } from '../constants/defaultSiteProfile';
-
-const STATS = [
-  { icon: Brain, label: 'Publications', value: '5+' },
-  { icon: Code, label: 'Key Projects', value: '3' },
-  { icon: Database, label: 'Research Areas', value: '4' },
-  { icon: TrendingUp, label: 'Years AI Experience', value: '3+' }
-];
+import { STATIC_PUBLICATIONS } from '../constants/publications';
+import { fetchMergedPublications } from '../utils/publications';
+import { getYearsAiExperience, RESEARCH_AREAS } from '../utils/homeStats';
 
 const Home = () => {
   const { profile, loading: profileLoading } = useSiteProfile();
   const [cvData, setCvData] = useState(null);
+  const [publicationCount, setPublicationCount] = useState(STATIC_PUBLICATIONS.length);
 
   const site = profile || DEFAULT_SITE_PROFILE;
   const cvHref = resolveAssetUrl(site.cvFileUrl, DEFAULT_SITE_PROFILE.cvFileUrl);
@@ -49,7 +46,18 @@ const Home = () => {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    fetchMergedPublications().then((pubs) => setPublicationCount(pubs.length));
+  }, []);
+
   const skills = site.skills?.length ? site.skills : DEFAULT_SITE_PROFILE.skills;
+  const yearsAiExperience = getYearsAiExperience();
+  const stats = [
+    { icon: Brain, label: 'Publications', value: String(publicationCount) },
+    { icon: Code, label: 'Key Projects', value: String(cvData?.projects?.length ?? '—') },
+    { icon: Database, label: 'Research Areas', value: String(RESEARCH_AREAS.length) },
+    { icon: TrendingUp, label: 'Years AI Experience', value: String(yearsAiExperience) }
+  ];
   const heroTitle = site.heroTitle || DEFAULT_SITE_PROFILE.heroTitle;
   const heroParts = heroTitle.includes('Alemu') ? heroTitle.split('Alemu Sisay Nigru') : [heroTitle, ''];
 
@@ -80,7 +88,9 @@ const Home = () => {
                     </Link>
                     <a
                       href={cvHref}
-                      download
+                      download={cvDownloadFilename(cvHref)}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center px-6 py-3 border border-secondary-300 text-secondary-700 rounded-lg hover:bg-secondary-50 transition-colors font-medium"
                     >
                       <Download className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -128,7 +138,7 @@ const Home = () => {
             viewport={{ once: true }}
             className="grid grid-cols-2 md:grid-cols-4 gap-8"
           >
-            {STATS.map((stat) => (
+            {stats.map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <stat.icon className="w-8 h-8 text-primary-600" aria-hidden="true" />
@@ -192,12 +202,12 @@ const Home = () => {
               Technical Skills
             </h2>
             <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
-              Medical imaging AI, spine MRI analysis, multimodal AI, and clinical decision support
+              {site.skillsSubtitle || DEFAULT_SITE_PROFILE.skillsSubtitle}
             </p>
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 min-h-[240px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 min-h-[400px]">
             {profileLoading ? (
-              <PageSkeleton lines={6} />
+              <PageSkeleton lines={9} />
             ) : (
               skills.map((skill, index) => (
                 <motion.div
