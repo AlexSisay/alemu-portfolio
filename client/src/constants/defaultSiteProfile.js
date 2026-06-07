@@ -5,7 +5,7 @@ export const DEFAULT_SITE_PROFILE = {
   heroSubtitle:
     'AI Research Scientist | PhD in AI in Medicine | Medical Imaging & Clinical Decision Support',
   heroBody:
-    'AI Research Scientist with a PhD in Artificial Intelligence in Medicine and 3+ years of experience developing machine learning and deep learning solutions for medical imaging and clinical decision support. Specialized in spine MRI analysis, multimodal data integration, and risk prediction using imaging and patient-reported outcomes.',
+    'AI Research Scientist with a PhD in Artificial Intelligence in Medicine. My work focuses on medical imaging, multimodal AI, large language models, and trustworthy healthcare systems, bridging cutting-edge research and real-world clinical deployment.',
   aboutText:
     'I am a passionate AI researcher and academic with expertise in machine learning, computer vision, and healthcare applications.',
   profileImageUrl: 'https://alexsisay.github.io/alemu-portfolio/alemu.jpg',
