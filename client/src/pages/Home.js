@@ -22,7 +22,7 @@ import { resolveAssetUrl, cvDownloadFilename } from '../utils/assets';
 import { DEFAULT_SITE_PROFILE } from '../constants/defaultSiteProfile';
 import { STATIC_PUBLICATIONS } from '../constants/publications';
 import { fetchMergedPublications } from '../utils/publications';
-import { getYearsAiExperience, RESEARCH_AREAS } from '../utils/homeStats';
+import { formatYearsAiExperience, RESEARCH_AREAS } from '../utils/homeStats';
 
 const Home = () => {
   const { profile, loading: profileLoading } = useSiteProfile();
@@ -51,12 +51,11 @@ const Home = () => {
   }, []);
 
   const skills = site.skills?.length ? site.skills : DEFAULT_SITE_PROFILE.skills;
-  const yearsAiExperience = getYearsAiExperience();
   const stats = [
     { icon: Brain, label: 'Publications', value: String(publicationCount) },
     { icon: Code, label: 'Key Projects', value: String(cvData?.projects?.length ?? '—') },
     { icon: Database, label: 'Research Areas', value: String(RESEARCH_AREAS.length) },
-    { icon: TrendingUp, label: 'Years AI Experience', value: String(yearsAiExperience) }
+    { icon: TrendingUp, label: 'Years AI Experience', value: formatYearsAiExperience() }
   ];
   const heroTitle = site.heroTitle || DEFAULT_SITE_PROFILE.heroTitle;
   const heroParts = heroTitle.includes('Alemu') ? heroTitle.split('Alemu Sisay Nigru') : [heroTitle, ''];
