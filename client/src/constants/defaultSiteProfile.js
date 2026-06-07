@@ -1,5 +1,3 @@
-const PUBLIC_BASE = process.env.PUBLIC_URL || '';
-
 export const DEFAULT_SITE_PROFILE = {
   heroTitle: "Hi, I'm Alemu Sisay Nigru",
   heroSubtitle:
